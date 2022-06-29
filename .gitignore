@@ -1,0 +1,62 @@
+
+# Server
+server/HELP.md
+server/target/
+server/!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# Client
+# Compiled output
+client/dist
+client/tmp
+client/out-tsc
+client/bazel-out
+
+# Node
+client/node_modules
+client/npm-debug.log
+client/yarn-error.log
+
+# Miscellaneous
+client/.angular/cache
+client/.sass-cache/
+client/connect.lock
+client/coverage
+client/libpeerconnection.log
+client/testem.log
+client/typings
+
+# System files
+cliet/.DS_Store
+client/Thumbs.db
+# Visual Studio
+client/.vscode/*
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
