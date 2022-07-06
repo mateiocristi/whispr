@@ -5,10 +5,12 @@ import com.whispr.server.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.security.Principal;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,8 +27,14 @@ public class UserController {
         return ResponseEntity.created(uri).body(userService.createUser(user));
     }
 
-    @GetMapping("/get/{userId}")
-    public ResponseEntity<?> getUser(@PathVariable long userId) {
-        return ResponseEntity.ok().body(userService.getUserById(userId));
+    @GetMapping("/get/{username}")
+    public ResponseEntity<?> getUserByUsername(@PathVariable String username, Principal principal) {
+        log.debug("user: " + principal.getName());
+        if(!principal.getName().equals(username)) {
+            return ResponseEntity.status(401).body("Invalid access token");
+        }
+        return ResponseEntity.ok().body(userService.getUserByUsername(username));
     }
+
+//    @PostMapping("/friendRequest/{}")
 }
