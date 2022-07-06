@@ -4,6 +4,7 @@ import com.whispr.server.model.AppUser;
 import com.whispr.server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -41,6 +42,12 @@ public class UserServiceImp implements UserService, UserDetailsService {
     public AppUser updateUser(AppUser user) {
         return userRepo.save(user);
     }
+
+    @Override
+    public Optional<AppUser> checkUser(String username) {
+        return Optional.ofNullable(userRepo.findByUsername("username goes here"));
+    }
+
 
     @Override
     public AppUser getUserByUsername(String username) {

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.security.Principal;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,13 +27,23 @@ public class UserController {
         return ResponseEntity.created(uri).body(userService.createUser(user));
     }
 
-    @GetMapping("/get/{id}")
-    public ResponseEntity<AppUser> getUserById(@PathVariable long id) {
-        return ResponseEntity.ok().body(userService.getUserById(id));
-    }
 
     @GetMapping("/get/{username}")
-    public ResponseEntity<AppUser> getUserByUsername(@PathVariable String username) {
+    public ResponseEntity<?> getUserByUsername(@PathVariable String username, Principal principal) {
+        log.debug("user: " + principal.getName());
+        if (!principal.getName().equals(username)) {
+            return ResponseEntity.status(401).body("Invalid access token");
+        }
         return ResponseEntity.ok().body(userService.getUserByUsername(username));
     }
+
+    @GetMapping("/checkUsername/{username}")
+    public ResponseEntity<?> checkUsername(@PathVariable String username) {
+        if (userService.checkUser(username).isPresent()) {
+            return ResponseEntity.ok().body("found");
+        }
+        return ResponseEntity.status(400).body("not found");
+    }
+
+//    @PostMapping("/friendRequest/{}")
 }

@@ -24,6 +24,9 @@ public class AppUser {
     private Set<String> roles = new HashSet<>();
     @OneToMany
     @ToString.Exclude
+    private Set<AppUser> contacts = new HashSet<>();
+    @OneToMany
+    @ToString.Exclude
     private Set<ChatRoom> rooms = new HashSet<>();
     @OneToMany
     @ToString.Exclude
