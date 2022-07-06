@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -7,17 +8,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class RegisterComponent implements OnInit {
 
-  username: String = "";
-  password: String = "";
-  rPassword: String = "";
+  username: string = "";
+  password: string = "";
+  rPassword: string = "";
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   ngOnInit(): void {
 
   }
 
-  Register() {
+  register() {
     console.log(this.username);
 
     const headers = { "Content-Type": "application/json"}

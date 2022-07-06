@@ -1,15 +1,19 @@
 import {Component, NgModule, OnInit} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {NgbModule} from '@ng-bootstrap/ng-bootstrap'
+import {UserService} from './service/user.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  providers: [UserService]
 })
 
 export class AppComponent {
   
-  constructor() { }
+  constructor(private userService: UserService) {}
+
+  ngOnInit(): void {
+      
+  }
 
 }
