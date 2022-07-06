@@ -27,6 +27,7 @@ public class UserController {
         return ResponseEntity.created(uri).body(userService.createUser(user));
     }
 
+
     @GetMapping("/get/{username}")
     public ResponseEntity<?> getUserByUsername(@PathVariable String username, Principal principal) {
         log.debug("user: " + principal.getName());
