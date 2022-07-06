@@ -5,10 +5,10 @@ import com.whispr.server.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -21,17 +21,13 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/register")
+    @PostMapping("/create")
     public ResponseEntity<AppUser> createUser(@RequestBody AppUser user) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/user/create").toUriString());
         log.debug("user: " + user);
         return ResponseEntity.created(uri).body(userService.createUser(user));
     }
 
-    @GetMapping("/get")
-    public String getUser(Authentication authentication) {
-        return authentication.getName();
-    }
     @GetMapping("/get/{id}")
     public ResponseEntity<AppUser> getUserById(@PathVariable long id) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
