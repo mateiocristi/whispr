@@ -1,7 +1,11 @@
 import { HttpClient } from "@angular/common/http";
+import { Injectable } from "@angular/core";
 import { CookieService } from "ngx-cookie-service";
 
-class UserService {
+@Injectable({
+    providedIn: 'root',
+})
+export class UserService {
 
     private user: User | undefined;
 
@@ -51,7 +55,7 @@ class UserService {
 
     }
 
-    getUser(id: bigint) {
+    private getUser(id: bigint) {
         
     }
 
@@ -60,7 +64,7 @@ class UserService {
     }
 
     private getLocalUser() {
-        this.cookieService.get('currentUser');
+        return this.cookieService.get('currentUser');
     }
 
 
