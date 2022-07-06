@@ -45,7 +45,7 @@ public class UserServiceImp implements UserService, UserDetailsService {
 
     @Override
     public Optional<AppUser> checkUser(String username) {
-        return Optional.ofNullable(userRepo.findByUsername("username goes here"));
+        return Optional.ofNullable(userRepo.findByUsername(username));
     }
 
 

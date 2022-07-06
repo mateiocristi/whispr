@@ -39,11 +39,11 @@ public class UserController {
 
     @GetMapping("/checkUsername/{username}")
     public ResponseEntity<?> checkUsername(@PathVariable String username) {
+        System.out.println("found " + userService.checkUser(username));
         if (userService.checkUser(username).isPresent()) {
             return ResponseEntity.ok().body("found");
         }
         return ResponseEntity.status(400).body("not found");
     }
 
-//    @PostMapping("/friendRequest/{}")
 }
