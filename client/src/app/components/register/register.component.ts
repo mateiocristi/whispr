@@ -1,5 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { UserService } from 'src/app/service/user.service';
 
 @Component({
   selector: 'app-register',
@@ -12,7 +14,7 @@ export class RegisterComponent implements OnInit {
   password: string = "";
   rPassword: string = "";
 
-  constructor(private http: HttpClient) { }
+  constructor(private router: Router, private http: HttpClient, private userService: UserService) { }
 
   ngOnInit(): void {
 
@@ -21,23 +23,8 @@ export class RegisterComponent implements OnInit {
   register() {
     console.log(this.username);
 
-    const headers = { "Content-Type": "application/json"}
-    const raw = JSON.stringify({
-      "username": this.username,
-      "password": this.password,
-      "roles": ["USER"]
-    });
-
-    const requestOptions = {
-      method: 'POST',
-      headers: headers,
-      body: raw,
-      redirect: 'follow'
-    };
-
-    this.http.post<any>('http://localhost:4000/user/register', raw, requestOptions).subscribe(data => {
-      console.log(data)
-    });
+    this.userService.register(this.username, this.password);
+    this.router.navigateByUrl('/');
   }
 
 }

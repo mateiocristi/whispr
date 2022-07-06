@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { CookieService } from "ngx-cookie-service";
+import { ignoreElements } from "rxjs";
 
 @Injectable({
     providedIn: 'root',
@@ -18,23 +19,22 @@ export class UserService {
     }
 
     register(username: string, password: string) {
-        const headers = { "Content-Type": "application/json"};
+        const headers = { "Content-Type": "application/json"}
         const raw = JSON.stringify({
-        "username": username,
-        "password": password,
-        "roles": ["USER"]
+            "username": username,
+            "password": password,
+            "roles": ["USER"]
         });
 
         const requestOptions = {
-        method: 'POST',
-        headers: headers,
-        body: raw,
-        redirect: 'follow'
+            method: 'POST',
+            headers: headers,
+            body: raw,
+            redirect: 'follow'
         };
 
-        const req = this.http.post<any>('http://localhost:4000/user/register', requestOptions).subscribe(data => {
-        console.log(data);
-        
+        this.http.post<any>('http://localhost:4000/user/create', raw, requestOptions).subscribe(data => {
+            console.log(data)
         });
     }
 
@@ -53,9 +53,20 @@ export class UserService {
 
         const req = this.http.post<Jwt>('http://localhost:4000/login', requestOptions);
 
+        this.getUser(username);
+
     }
 
-    private getUser(id: bigint) {
+    private getUser(username: string) {
+        const headers = { "Content-Type": "application/json"};
+        const requestOptions = {
+            method: 'POST',
+            headers: headers,
+            redirect: 'follow'
+        };
+
+        const req = this.http.get<User>('http://localhost:4000/user/get/' + username);
+        console.log("retrieved user: " + req);
         
     }
 
@@ -71,8 +82,12 @@ export class UserService {
 }
 
 interface User {
+    id: bigint,
     username: string,
-    roles: []
+    password: string,
+    rooms: [],
+    roles: [],
+    messages: []
 }
 
 interface Jwt {
