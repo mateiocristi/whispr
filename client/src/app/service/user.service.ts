@@ -1,4 +1,4 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders, HttpRequest } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { CookieService } from "ngx-cookie-service";
 import { ignoreElements } from "rxjs";
@@ -14,35 +14,39 @@ export class UserService {
         
     }
 
-    checkUser(username: string) {
-        const headers = { "Content-Type": "application/json"}
-        const req = this.http.get('http://localhost:4000/user/checkUsername/' + username, { headers });
-        req.subscribe(response => {
-            console.log('resp ' + response);
-            
-        })
+    checkUsername(username: string) {
+        const headers = new HttpHeaders().set("Content-Type", "text/plain")
+        const reqOptions: Object = {
+            headers: headers,
+            responseType: 'text'
+        }
+        const req = this.http.get<string>('http://localhost:4000/user/checkUsername/' + username, reqOptions);
+        // req.subscribe(response => {
+        //         return false;
+        // })
+        return req;
     }
 
-    register(username: string, password: string) {
+    async register(username: string, password: string) {
 
-        this.checkUser(username);
-        // const headers = { "Content-Type": "application/json"}
-        // const raw = JSON.stringify({
-        //     "username": username,
-        //     "password": password,
-        //     "roles": ["USER"]
-        // });
+        this.checkUsername(username);
+        const headers = { "Content-Type": "application/json"}
+        const raw = JSON.stringify({
+            "username": username,
+            "password": password,
+            "roles": ["USER"]
+        });
 
-        // const requestOptions = {
-        //     method: 'POST',
-        //     headers: headers,
-        //     body: raw,
-        //     redirect: 'follow'
-        // };
+        const requestOptions = {
+            method: 'POST',
+            headers: headers,
+            body: raw,
+            redirect: 'follow'
+        };
 
-        // this.http.post<any>('http://localhost:4000/user/create', raw, requestOptions).subscribe(data => {
-        //     console.log(data)
-        // });
+        this.http.post<any>('http://localhost:4000/user/create', raw, requestOptions).subscribe(data => {
+            console.log(data);
+        });
     }
 
     login(username: string, password: string) {

@@ -41,9 +41,9 @@ public class UserController {
     public ResponseEntity<?> checkUsername(@PathVariable String username) {
         System.out.println("found " + userService.checkUser(username));
         if (userService.checkUser(username).isPresent()) {
-            return ResponseEntity.ok().body("found");
+            return ResponseEntity.status(200).body("found");
         }
-        return ResponseEntity.status(400).body("not found");
+        return ResponseEntity.status(200).body("not found");
     }
 
 }
