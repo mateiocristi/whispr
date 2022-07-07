@@ -28,13 +28,9 @@ public class UserController {
     }
 
 
-    @GetMapping("/get/{username}")
-    public ResponseEntity<?> getUserByUsername(@PathVariable String username, Principal principal) {
-        log.debug("user: " + principal.getName());
-        if (!principal.getName().equals(username)) {
-            return ResponseEntity.status(401).body("Invalid access token");
-        }
-        return ResponseEntity.ok().body(userService.getUserByUsername(username));
+    @GetMapping("/login")
+    public ResponseEntity<?> getUserByUsername(Principal principal) {
+        return ResponseEntity.ok().body(userService.getUserByUsername(principal.getName()));
     }
 
     @GetMapping("/checkUsername/{username}")
