@@ -66,10 +66,10 @@ export class UserService {
 
        this.http.post<Jwt>('http://localhost:4000/login', urlencoded, { headers }).subscribe(
         jwt => {
-            console.log('jwt ' + jwt);
+            console.log('jwt ' + jwt.access_token + 'refresh ' +jwt.refresh_token);
             
             this.saveCookie('jwt', jwt);
-            console.log('jwt ' + (this.getCookie('jwt') || '{}'));
+            console.log('jwt ' + (this.getCookie('jwt') || '{}').access_token);
             ;
             this.getUser(username);
         }
@@ -80,7 +80,10 @@ export class UserService {
     }
 
     private getUser(username: string) {
-        const headers = { "Content-Type": "application/json", "Authorization": "Bearer " + this.getCookie(('jwt') || '{}').access_token};
+        const access_token = this.getCookie(('jwt')).access_token;
+        console.log('access token from cookies: ' + access_token);
+        
+        const headers = { "Content-Type": "application/json", "Authorization": "Bearer " + access_token};
         const requestOptions = {
             method: 'POST',
             headers: headers,
@@ -102,7 +105,7 @@ export class UserService {
     }
 
     private getCookie(key: string) {
-        return JSON.parse(localStorage.getItem(key) || '{}');
+        return JSON.parse(this.cookieService.get(key) || '{}');
     }
 
 
