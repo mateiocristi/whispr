@@ -10,6 +10,7 @@ import { UserService } from 'src/app/service/user.service';
 })
 export class RegisterComponent implements OnInit {
 
+  isUsernameTaken: boolean = false;
   username: string = "";
   password: string = "";
   rPassword: string = "";
@@ -23,6 +24,7 @@ export class RegisterComponent implements OnInit {
   register() {
     console.log(this.username);
 
+    this.userService.checkUsername(this.username).subscribe()
     this.userService.register(this.username, this.password);
     this.router.navigateByUrl('/');
   }
