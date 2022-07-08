@@ -9,9 +9,14 @@ import { ignoreElements } from "rxjs";
 })
 export class UserService {
 
-    private user: User | undefined;
+    private isFound: boolean;
+    private chatEndUsername: string;
 
-    constructor(private cookieService: CookieService, private http: HttpClient, private router: Router) {}
+    constructor(private cookieService: CookieService, private http: HttpClient, private router: Router) {
+        this.loginWithJWT();
+        this.isFound = false;
+        this.chatEndUsername = "";
+    }
 
     register(username: string, password: string) {
 
@@ -62,6 +67,8 @@ export class UserService {
     }
 
     checkUsername(username: string) {
+        console.log('checking user ' + username);
+        
         const headers = new HttpHeaders().set("Content-Type", "text/plain")
         const reqOptions: Object = {
             headers: headers,
@@ -83,13 +90,17 @@ export class UserService {
         };
 
         const req = this.http.get<User>('http://localhost:4000/user/login/', { headers });
-        console.log("retrieved user: " + req);
         req.subscribe(data => {
-            console.log('data ' + data.username);
+            console.log('username: ' + data.username + ' id: ' + data.id);
             this.saveCookie('currentUser', data)
             this.router.navigateByUrl('/home');
         })
         
+    }
+
+    logout(): void {
+        this.deleteCookies();
+        this.router.navigateByUrl('/');
     }
 
     private saveCookie(key: string, data: any) {
@@ -100,7 +111,29 @@ export class UserService {
         return JSON.parse(this.cookieService.get(key) || '{}');
     }
 
+    private deleteCookies(): void {
+        this.cookieService.deleteAll();
+    }
 
+    getLocalUser() {
+        return this.getCookie('currentUser');
+    }
+
+    setIsfound(value: boolean): void {
+        this.isFound = value;
+    }
+
+    getIsFound(): boolean {
+        return this.isFound;
+    }
+
+    setChatEndUsername(username: string): void {
+        this.chatEndUsername = username;
+    }
+
+    getChatEndUsername(): string {
+        return this.chatEndUsername;
+    }
 
 }
 

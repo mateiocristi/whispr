@@ -1,0 +1,29 @@
+.scrollarea {
+    overflow: auto;
+    height: 97vh;
+    /* width: 35vw; */
+}
+
+.scrollarea::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Hide scrollbar for IE, Edge and Firefox */
+.scrollarea {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+input {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-color: lightgray;
+}
+
+button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-color: lightgray;
+    border-left: 0;
+}
+

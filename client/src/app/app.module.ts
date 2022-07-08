@@ -10,6 +10,9 @@ import { LogonScreenComponent } from './components/logon_screen/logon_screen.com
 import { RegisterComponent } from './components/register/register.component';
 import { LoginComponent } from './components/login/login.component';
 import { HomeComponent } from './home/home.component';
+import { NavbarComponent } from './navbar/navbar.component';
+import { ContactsViewComponent } from './contacts-view/contacts-view.component';
+import { ChatViewComponent } from './chat-view/chat-view.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +20,10 @@ import { HomeComponent } from './home/home.component';
     LogonScreenComponent,
     RegisterComponent,
     LoginComponent,
-    HomeComponent
+    HomeComponent,
+    NavbarComponent,
+    ContactsViewComponent,
+    ChatViewComponent
   ],
     imports: [
       HttpClientModule,

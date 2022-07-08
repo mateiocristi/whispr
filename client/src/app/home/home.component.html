@@ -1,1 +1,12 @@
-<p>home works!</p>
+<div class="justify-content-center row">
+    <div *ngIf="isFound; then thenBlock else elseBlock"></div>
+    <ng-template #thenBlock>
+        <app-contacts-view class="col-4 p-0"></app-contacts-view>
+        <app-chat-view class="col-8"></app-chat-view>
+    </ng-template>
+    <ng-template #elseBlock>
+        <app-contacts-view class="col-4 p-0"></app-contacts-view>
+        <!-- <app-chat-view class="col-8"></app-chat-view> -->
+        <div class="empty-chat col-8">Empty here...</div>
+    </ng-template>
+</div>

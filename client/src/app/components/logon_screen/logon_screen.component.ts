@@ -12,7 +12,6 @@ export class LogonScreenComponent implements OnInit {
   constructor(private userService: UserService, private router: Router) {}
 
   ngOnInit(): void {
-    this.userService.loginWithJWT();
   }
 
   handleClick(event: Event) {
