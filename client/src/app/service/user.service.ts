@@ -2,23 +2,28 @@ import { HttpClient, HttpHeaders, HttpRequest } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { CookieService } from "ngx-cookie-service";
-import { ignoreElements } from "rxjs";
+import { ignoreElements, Observable } from "rxjs";
 
 @Injectable({
     providedIn: 'root',
 })
 export class UserService {
 
-    private isFound: boolean;
-    private chatEndUsername: string;
+    // private isFound: boolean;
+    // private chatEndUsername: string;
+    // private user: User;
 
     constructor(private cookieService: CookieService, private http: HttpClient, private router: Router) {
-        this.loginWithJWT();
-        this.isFound = false;
-        this.chatEndUsername = "";
+        this.loginWithJWT().subscribe(data => {
+            console.log('username: ' + data.username + ' id: ' + data.id);
+            this.saveCookie('currentUser', data)
+            this.router.navigateByUrl('/home');
+        });
+        // this.isFound = false;
+        // this.chatEndUsername = "";
     }
 
-    register(username: string, password: string) {
+    register(username: string, password: string): Observable<any> {
 
         const headers = { "Content-Type": "application/json"}
         const raw = JSON.stringify({
@@ -34,12 +39,10 @@ export class UserService {
             redirect: 'follow'
         };
 
-        this.http.post<any>('http://localhost:4000/user/create', raw, requestOptions).subscribe(data => {
-            console.log(data);
-        });
+        return this.http.post<any>('http://localhost:4000/user/create', raw, requestOptions)
     }
 
-    loginWithUsernameAndPassword(username: string, password: string) {
+    loginWithUsernameAndPassword(username: string, password: string): Observable<Jwt> {
 
         console.log('xxx ' + username + " " + password);
         const headers = {"Content-Type": "application/x-www-form-urlencoded"};
@@ -54,19 +57,10 @@ export class UserService {
             redirect: 'follow'
         };
 
-       this.http.post<Jwt>('http://localhost:4000/login', urlencoded, { headers }).subscribe(
-        jwt => {
-            console.log('jwt ' + jwt.access_token + 'refresh ' +jwt.refresh_token);
-            
-            this.saveCookie('jwt', jwt);
-            console.log('jwt ' + (this.getCookie('jwt') || '{}').access_token);
-            ;
-            this.loginWithJWT();
-        }
-       );
+       return this.http.post<Jwt>('http://localhost:4000/login', urlencoded, { headers });
     }
 
-    checkUsername(username: string) {
+    checkUsername(username: string): Observable<string> {
         console.log('checking user ' + username);
         
         const headers = new HttpHeaders().set("Content-Type", "text/plain")
@@ -78,7 +72,7 @@ export class UserService {
         return req;
     }
 
-    public loginWithJWT() {
+    loginWithJWT(): Observable<User> {
         const access_token = this.getCookie(('jwt')).access_token;
         console.log('access token from cookies: ' + access_token);
         
@@ -90,11 +84,7 @@ export class UserService {
         };
 
         const req = this.http.get<User>('http://localhost:4000/user/login/', { headers });
-        req.subscribe(data => {
-            console.log('username: ' + data.username + ' id: ' + data.id);
-            this.saveCookie('currentUser', data)
-            this.router.navigateByUrl('/home');
-        })
+        return req;
         
     }
 
@@ -103,15 +93,15 @@ export class UserService {
         this.router.navigateByUrl('/');
     }
 
-    private saveCookie(key: string, data: any) {
+    saveCookie(key: string, data: any) {
         this.cookieService.set(key, JSON.stringify(data));
     }
 
-    private getCookie(key: string): any {
+    getCookie(key: string): any {
         return JSON.parse(this.cookieService.get(key) || '{}');
     }
 
-    private deleteCookies(): void {
+    deleteCookies(): void {
         this.cookieService.deleteAll();
     }
 
@@ -119,21 +109,21 @@ export class UserService {
         return this.getCookie('currentUser');
     }
 
-    setIsfound(value: boolean): void {
-        this.isFound = value;
-    }
+    // setIsfound(value: boolean): void {
+    //     this.isFound = value;
+    // }
 
-    getIsFound(): boolean {
-        return this.isFound;
-    }
+    // getIsFound(): boolean {
+    //     return this.isFound;
+    // }
 
-    setChatEndUsername(username: string): void {
-        this.chatEndUsername = username;
-    }
+    // setChatEndUsername(username: string): void {
+    //     this.chatEndUsername = username;
+    // }
 
-    getChatEndUsername(): string {
-        return this.chatEndUsername;
-    }
+    // getChatEndUsername(): string {
+    //     return this.chatEndUsername;
+    // }
 
 }
 

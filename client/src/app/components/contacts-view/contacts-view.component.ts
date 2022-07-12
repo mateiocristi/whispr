@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { pipe } from 'rxjs';
-import { UserService } from '../service/user.service';
+import { UserService } from '../../service/user.service';
 
 @Component({
   selector: 'app-contacts-view',
@@ -26,7 +26,7 @@ export class ContactsViewComponent implements OnInit {
         if (text === 'found') {
           this.isChatOpen = true;
         }
-          
+
       });
     } else {
       console.log("no good");

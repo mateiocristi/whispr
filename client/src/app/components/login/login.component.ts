@@ -19,7 +19,20 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-    this.userService.loginWithUsernameAndPassword(this.username, this.password);
+    this.userService.loginWithUsernameAndPassword(this.username, this.password).subscribe(
+      jwt => {
+          console.log('jwt ' + jwt.access_token + 'refresh ' +jwt.refresh_token);
+          
+          this.userService.saveCookie('jwt', jwt);
+          console.log('jwt ' + (this.userService.getCookie('jwt') || '{}').access_token);
+          ;
+          this.userService.loginWithJWT().subscribe(data => {
+            console.log('username: ' + data.username + ' id: ' + data.id);
+            this.userService.saveCookie('currentUser', data)
+            this.router.navigateByUrl('/home');
+        });
+      }
+     );;
     this.router.navigateByUrl('/');
   }
 
