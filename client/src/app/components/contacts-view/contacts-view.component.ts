@@ -25,10 +25,6 @@ export class ContactsViewComponent implements OnInit {
         this.userService.checkUsername(this.searchedContact).subscribe(text => {
         if (text === 'found') {
           this.isChatOpen = true;
-          this.userService.setIsfound(this.isChatOpen)
-          this.userService.setChatEndUsername(this.searchedContact);
-
-          
         }
           
       });

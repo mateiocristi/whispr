@@ -15,7 +15,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
       console.log("is found is " + this.isFound);
-      
+
   }
 
 }
