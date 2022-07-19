@@ -7,15 +7,13 @@ import { UserService } from '../../service/user.service';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-
-  isFound: boolean = false;
+  
   otherUsername: string = "";
 
   constructor(private userService: UserService) { }
 
   ngOnInit(): void {
-      console.log("is found is " + this.isFound);
-
+      
   }
 
 }

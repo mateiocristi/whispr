@@ -1,10 +1,10 @@
 <div class="page-content page-container" id="page-content">
     <div class="message-container">
-        <div class="d-flex justify-content-center">
+        <div *ngif="isEndUser" class="d-flex justify-content-center">
             <div class="">
                 <div class="card card-bordered">
                     <div class="card-header">
-                        <h4 class="card-title"><strong>Username</strong></h4>
+                        <h4 class="card-title"><strong>{{ endUser!.username }}</strong></h4>
                     </div>
                     <div class="chat-content flex-fill" style="overflow-y: scroll !important">
                         <div class="media media-chat">

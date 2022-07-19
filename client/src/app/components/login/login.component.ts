@@ -28,6 +28,8 @@ export class LoginComponent implements OnInit {
           ;
           this.userService.loginWithJWT().subscribe(data => {
             console.log('username: ' + data.username + ' id: ' + data.id);
+            this.userService.userChange.next(data);
+            this.userService.getUser();
             this.userService.saveCookie('currentUser', data)
             this.router.navigateByUrl('/home');
         });

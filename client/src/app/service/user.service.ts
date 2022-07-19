@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders, HttpRequest } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { CookieService } from "ngx-cookie-service";
-import { ignoreElements, Observable } from "rxjs";
+import { ignoreElements, Observable, Subject } from "rxjs";
 
 @Injectable({
     providedIn: 'root',
@@ -11,16 +11,22 @@ export class UserService {
 
     // private isFound: boolean;
     // private chatEndUsername: string;
-    // private user: User;
+    userChange: Subject<User | undefined> = new Subject<User | undefined>();
+    private user: User | undefined;
 
     constructor(private cookieService: CookieService, private http: HttpClient, private router: Router) {
+        this.userChange.subscribe((value: User | undefined) => {
+            this.user = value;
+            console.log('user changed');
+            
+        })
         this.loginWithJWT().subscribe(data => {
             console.log('username: ' + data.username + ' id: ' + data.id);
+            this.user = data;
+            this.userChange.next(data);
             this.saveCookie('currentUser', data)
             this.router.navigateByUrl('/home');
         });
-        // this.isFound = false;
-        // this.chatEndUsername = "";
     }
 
     register(username: string, password: string): Observable<any> {
@@ -89,6 +95,7 @@ export class UserService {
     }
 
     logout(): void {
+        this.userChange.next(undefined);
         this.deleteCookies();
         this.router.navigateByUrl('/');
     }
@@ -109,25 +116,12 @@ export class UserService {
         return this.getCookie('currentUser');
     }
 
-    // setIsfound(value: boolean): void {
-    //     this.isFound = value;
-    // }
-
-    // getIsFound(): boolean {
-    //     return this.isFound;
-    // }
-
-    // setChatEndUsername(username: string): void {
-    //     this.chatEndUsername = username;
-    // }
-
-    // getChatEndUsername(): string {
-    //     return this.chatEndUsername;
-    // }
-
+    getUser(): User | undefined {
+        return this.user;
+    }
 }
 
-interface User {
+export interface User {
     id: bigint,
     username: string,
     password: string,

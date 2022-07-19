@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from '../../service/user.service';
+import { Subscription } from 'rxjs';
+import { User, UserService } from '../../service/user.service';
 
 @Component({
   selector: 'app-navbar',
@@ -8,14 +9,25 @@ import { UserService } from '../../service/user.service';
 })
 export class NavbarComponent implements OnInit {
 
-  username: string | any = "";
+  user: User | undefined;
+  isLoggedIn: boolean = false;
+  
+  userChange: Subscription = this.userService.userChange.subscribe(data => {
+    this.user = this.userService.getUser();
+    this.isLoggedIn = true ? this.userService.getUser() !== undefined : false;
+    console.log("user change to " + this.user);
+  });
 
   constructor(public userService: UserService) {
-    this.username = userService.getLocalUser().username;
    }
 
   ngOnInit(): void {
-    console.log("usernme is " + this.username);
+    // this.isLoggedIn = true ? this.userService.getUser() !== undefined : false;
+    
+  }
+
+  ngOnDestroy(): void {
+      this.userChange.unsubscribe();
   }
 
   logout(): void {
