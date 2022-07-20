@@ -12,13 +12,12 @@ export class UserService {
     // private isFound: boolean;
     // private chatEndUsername: string;
     userChange: Subject<User | undefined> = new Subject<User | undefined>();
-    private user: User | undefined;
+    user: User | undefined;
 
     constructor(private cookieService: CookieService, private http: HttpClient, private router: Router) {
         this.userChange.subscribe((value: User | undefined) => {
+            console.log('changing end user');
             this.user = value;
-            console.log('user changed');
-            
         })
         this.loginWithJWT().subscribe(data => {
             console.log('username: ' + data.username + ' id: ' + data.id);

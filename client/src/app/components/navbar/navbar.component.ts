@@ -15,10 +15,10 @@ export class NavbarComponent implements OnInit {
   userChange: Subscription = this.userService.userChange.subscribe(data => {
     this.user = this.userService.getUser();
     this.isLoggedIn = true ? this.userService.getUser() !== undefined : false;
-    console.log("user change to " + this.user);
+    console.log("logged user change to " + this.user);
   });
 
-  constructor(public userService: UserService) {
+  constructor(private userService: UserService) {
    }
 
   ngOnInit(): void {

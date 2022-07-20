@@ -1,5 +1,9 @@
-.empty-chat {
+/* .empty-chat {
     background-color: grey;
     height: 97vh;
     text-align: center;
-}
+} */
+.home-container {
+    height: 100vh;
+    background-color: lightblue;
+  }

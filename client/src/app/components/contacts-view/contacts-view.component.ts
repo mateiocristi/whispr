@@ -22,13 +22,16 @@ export class ContactsViewComponent implements OnInit {
   handleSearch(event: Event): void {
     console.log("searching for user");
     if (this.searchedContact !== this.userService.getUser()!.username) {
-        this.userService.checkUsername(this.searchedContact!).subscribe(text => {
-        if (text === 'found') {
-          // todo: set end user
-          // this.chatService.setEndUser()
-        }
-
-      });
+        this.chatService.fetchEndUser(this.searchedContact!).subscribe(data => {
+          console.log("end data is " + data);
+          this.chatService.setEndUser(data);  
+          if (data === undefined)
+            console.log('end user not found');
+          else console.log('end user ' + this.chatService.getEndUser()?.username);
+        }, err => {
+          console.log('error ' + err);
+          
+        });
     } else {
       console.log("no good");
       console.log(this.userService.getUser()!.username);

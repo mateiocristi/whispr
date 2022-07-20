@@ -13,6 +13,7 @@ import { HomeComponent } from './components/home/home.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { ContactsViewComponent } from './components/contacts-view/contacts-view.component';
 import { ChatViewComponent } from './components/chat-view/chat-view.component';
+import { UserProfileComponent } from './components/user-profile/user-profile.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { ChatViewComponent } from './components/chat-view/chat-view.component';
     HomeComponent,
     NavbarComponent,
     ContactsViewComponent,
-    ChatViewComponent
+    ChatViewComponent,
+    UserProfileComponent
   ],
     imports: [
       HttpClientModule,
