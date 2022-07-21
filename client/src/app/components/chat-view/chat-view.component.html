@@ -1,104 +1,31 @@
 <div *ngIf="isEndUser" class="chat-panel">
-      <div class="row no-gutters">
-        <div class="col-md-3">
-          <div class="chat-bubble chat-bubble--left">
-            first Hello dude!
-          </div>
-        </div>
-      </div>
-      <div class="row no-gutters">
-        <div class="col-md-3 offset-md-9">
-          <div class="chat-bubble chat-bubble--right">
-            secound Hello dude!
-          </div>
-        </div>
-      </div>
-      <div class="row no-gutters">
-        <div class="col-md-3 offset-md-9">
-          <div class="chat-bubble chat-bubble--right">
-            Hello dude!
-          </div>
-        </div>
-      </div>
-      <div class="row no-gutters">
-        <div class="col-md-3">
-          <div class="chat-bubble chat-bubble--left">
-            Hello dude!
-          </div>
-        </div>
-      </div>
-      <div class="row no-gutters">
-        <div class="col-md-3">
-          <div class="chat-bubble chat-bubble--left">
-            Hello dude!
-          </div>
-        </div>
-      </div>
-      <div class="row no-gutters">
-        <div class="col-md-3">
-          <div class="chat-bubble chat-bubble--left">
-            Hello dude!
-          </div>
-        </div>
-      </div>
-      <div class="row no-gutters">
-        <div class="col-md-3 offset-md-9">
-          <div class="chat-bubble chat-bubble--right">
-            Hello dude!
-          </div>
-        </div>
-      </div>
-      <div class="row no-gutters">
-        <div class="col-md-3">
-          <div class="chat-bubble chat-bubble--left">
-            first Hello dude!
-          </div>
-        </div>
-      </div>
-      <div class="row no-gutters">
-        <div class="col-md-3 offset-md-9">
-          <div class="chat-bubble chat-bubble--right">
-            Hello dude!
-          </div>
-        </div>
-      </div>
-      <div class="row no-gutters">
-        <div class="col-md-3 offset-md-9">
-          <div class="chat-bubble chat-bubble--right">
-            Hello dude!
-          </div>
-        </div>
-      </div>
-      <div class="row no-gutters">
-        <div class="col-md-3 offset-md-9">
-          <div class="chat-bubble chat-bubble--right">
-            Hello dude!
-          </div>
-        </div>
-      </div>
-      <div class="row no-gutters">
-        <div class="col-md-3 offset-md-9">
-          <div class="chat-bubble chat-bubble--right">
-            Hello dude!
-          </div>
-        </div>
-      </div>
-      <div class="row no-gutters">
-        <div class="col-md-3 offset-md-9">
-          <div class="chat-bubble chat-bubble--right">
-            Hello dude!
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <div class="chat-box-tray input-group p-2" style="bottom: 0;margin-top: auto;">
-            <input type="text" class="form-control" placeholder="Enter a message" aria-label="Recipient's username"
-              aria-describedby="basic-addon2">
-            <div class="input-group-append">
-              <button class="btn btn-outline-secondary" type="button">Button</button>
-            </div>
-          </div>
+  <ng-template *ngFor="let message of currentRoom!.messages">
+    <div *ngIf="message.user.id === endUser!.id; else elseBlock" class="row no-gutters">
+      <div class="col-md-3">
+        <div class="chat-bubble chat-bubble--left">
+          {{ message.messageText }}
         </div>
       </div>
     </div>
+    <ng-template #elseBlock>
+      <div class="row no-gutters">
+        <div class="col-md-3 offset-md-9">
+          <div class="chat-bubble chat-bubble--right">
+            {{ message.messageText }}
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </ng-template>
+  <div class="row">
+    <div class="col-12">
+      <div class="chat-box-tray input-group p-2" style="bottom: 0;margin-top: auto;">
+        <input type="text" class="form-control" placeholder="Enter a message" aria-label="Recipient's username"
+          aria-describedby="basic-addon2" [ngModel]="messageText">
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary" type="button" (click)="sendButtonHandler($event)">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { ChatService, EndUser } from 'src/app/service/chat.service';
+import { ChatRoom, ChatService, EndUser } from 'src/app/service/chat.service';
 import { User, UserService } from 'src/app/service/user.service';
 
 @Component({
@@ -10,14 +10,25 @@ import { User, UserService } from 'src/app/service/user.service';
 })
 export class ChatViewComponent implements OnInit {
 
-  endUser: EndUser | undefined;
+  endUser?: EndUser;
   isEndUser: boolean = false;
+  currentRoom?: ChatRoom;
+  messageText!: string; 
 
-  endUserChange: Subscription = this.chatService.chatChange.subscribe((data) => {
+  newMessage: Subscription = this.chatService.newMessage.subscribe((data) => {
+    console.log("new message received");
+    
+    this.currentRoom!.messages = data;
+  })
+
+  endUserChange: Subscription = this.chatService.roomChange.subscribe((data) => {
     console.log("end user changed");
     
     this.endUser = this.chatService.getEndUser();
     this.isEndUser = true ? this.chatService.getEndUser() !== undefined : false;
+
+    // todo: update current room
+    this.chatService.connectToChat();
   })
 
   constructor(private userService: UserService, private chatService: ChatService) {}
@@ -27,6 +38,13 @@ export class ChatViewComponent implements OnInit {
 
   ngOnDestroy(): void {
     this.endUserChange.unsubscribe();
+  }
+
+  sendButtonHandler(event: Event): void {
+    if (this.messageText) {
+      this.chatService.sendMessage(this.messageText);
+    }
+    
   }
 
 }

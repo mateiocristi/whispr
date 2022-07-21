@@ -3,28 +3,27 @@ import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { CookieService } from "ngx-cookie-service";
 import { ignoreElements, Observable, Subject } from "rxjs";
+import { Globals } from "../utils/globals"
 
 @Injectable({
-    providedIn: 'root',
+    providedIn: "root",
 })
 export class UserService {
 
-    // private isFound: boolean;
-    // private chatEndUsername: string;
     userChange: Subject<User | undefined> = new Subject<User | undefined>();
     user: User | undefined;
 
+    chatRooms: Map<string, object> = new Map<string, object>();
+
     constructor(private cookieService: CookieService, private http: HttpClient, private router: Router) {
         this.userChange.subscribe((value: User | undefined) => {
-            console.log('changing end user');
             this.user = value;
         })
         this.loginWithJWT().subscribe(data => {
-            console.log('username: ' + data.username + ' id: ' + data.id);
             this.user = data;
             this.userChange.next(data);
-            this.saveCookie('currentUser', data)
-            this.router.navigateByUrl('/home');
+            this.saveCookie("currentUser", data)
+            this.router.navigateByUrl("/home");
         });
     }
 
@@ -38,57 +37,54 @@ export class UserService {
         });
 
         const requestOptions = {
-            method: 'POST',
+            method: "POST",
             headers: headers,
             body: raw,
-            redirect: 'follow'
+            redirect: "follow"
         };
 
-        return this.http.post<any>('http://localhost:4000/user/create', raw, requestOptions)
+        return this.http.post<any>(Globals.API_ENDPOINT + "/user/create", raw, requestOptions)
     }
 
     loginWithUsernameAndPassword(username: string, password: string): Observable<Jwt> {
-
-        console.log('xxx ' + username + " " + password);
         const headers = {"Content-Type": "application/x-www-form-urlencoded"};
         const urlencoded = new URLSearchParams();
         urlencoded.append("username", username);
         urlencoded.append("password", password);
 
         const requestOptions = {
-            method: 'POST',
+            method: "POST",
             headers: headers,
             body: urlencoded,
-            redirect: 'follow'
+            redirect: "follow"
         };
 
-       return this.http.post<Jwt>('http://localhost:4000/login', urlencoded, { headers });
+       return this.http.post<Jwt>(Globals.API_ENDPOINT + "/login", urlencoded, { headers });
     }
 
     checkUsername(username: string): Observable<string> {
-        console.log('checking user ' + username);
         
         const headers = new HttpHeaders().set("Content-Type", "text/plain")
         const reqOptions: Object = {
             headers: headers,
-            responseType: 'text'
+            responseType: "text"
         }
-        const req = this.http.get<string>('http://localhost:4000/user/checkUsername/' + username, reqOptions);
+        const req = this.http.get<string>(Globals.API_ENDPOINT + "/user/checkUsername/" + username, reqOptions);
         return req;
     }
 
     loginWithJWT(): Observable<User> {
-        const access_token = this.getCookie(('jwt')).access_token;
-        console.log('access token from cookies: ' + access_token);
+        const access_token = this.getCookie(("jwt")).access_token;
+        console.log("access token from cookies: " + access_token);
         
         const headers = { "Content-Type": "application/json", "Authorization": "Bearer " + access_token};
         const requestOptions = {
-            method: 'POST',
+            method: "POST",
             headers: headers,
-            redirect: 'follow'
+            redirect: "follow"
         };
 
-        const req = this.http.get<User>('http://localhost:4000/user/login/', { headers });
+        const req = this.http.get<User>(Globals.API_ENDPOINT + "/user/login/", { headers });
         return req;
         
     }
@@ -96,7 +92,7 @@ export class UserService {
     logout(): void {
         this.userChange.next(undefined);
         this.deleteCookies();
-        this.router.navigateByUrl('/');
+        this.router.navigateByUrl("/");
     }
 
     saveCookie(key: string, data: any) {
@@ -104,7 +100,7 @@ export class UserService {
     }
 
     getCookie(key: string): any {
-        return JSON.parse(this.cookieService.get(key) || '{}');
+        return JSON.parse(this.cookieService.get(key) || "{}");
     }
 
     deleteCookies(): void {
@@ -112,7 +108,7 @@ export class UserService {
     }
 
     getLocalUser() {
-        return this.getCookie('currentUser');
+        return this.getCookie("currentUser");
     }
 
     getUser(): User | undefined {

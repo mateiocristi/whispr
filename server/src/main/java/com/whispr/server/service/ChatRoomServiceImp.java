@@ -21,7 +21,8 @@ public class ChatRoomServiceImp implements ChatRoomService {
 
     @Override
     public Set<ChatRoom> getAllRooms() {
-        return (Set<ChatRoom>) roomRepo.findAll();
+//        return (Set<ChatRoom>) roomRepo.findAll();
+        return null;
     }
 
     @Override
@@ -37,8 +38,9 @@ public class ChatRoomServiceImp implements ChatRoomService {
 
     @Override
     public ChatRoom getRoomByUsers(Set<AppUser> users) {
-        Optional<ChatRoom> chatRoomOptional = roomRepo.findByUsers(users);
-        return handleChatRoom(chatRoomOptional);
+//        Optional<ChatRoom> chatRoomOptional = Optional.ofNullable(roomRepo.findByUsers(users));
+//        return handleChatRoom(chatRoomOptional);
+        return null;
     }
 
     private ChatRoom handleChatRoom(Optional<ChatRoom> chatRoomOptional) {

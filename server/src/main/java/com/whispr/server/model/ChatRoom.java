@@ -10,7 +10,8 @@ import java.util.Set;
 @Builder
 @Getter
 @Setter
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 public class ChatRoom {
     @Id

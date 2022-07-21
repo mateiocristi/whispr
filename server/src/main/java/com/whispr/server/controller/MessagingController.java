@@ -23,13 +23,10 @@ import java.util.Set;
 @Slf4j
 public class MessagingController {
 
-    @Autowired
+
     private SimpMessagingTemplate simpMessagingTemplate;
-    @Autowired
     private ChatRoomService chatRoomService;
-    @Autowired
     private MessageService messageService;
-    @Autowired
     private UserService userService;
 
     @MessageMapping("/chat/{from}/{to}")
@@ -50,12 +47,10 @@ public class MessagingController {
     }
 
     @ResponseBody
-    @PostMapping("/getMessages/{room_id}")
-    public ResponseEntity<Set<Message>> getMessagesByChatRoomId(@PathVariable Long room_id) {
+    @GetMapping("/getMessages/{room_id}")
+    public ResponseEntity<Set<Message>> getMessagesByChatRoomId(@PathVariable long room_id) {
         ChatRoom chatRoom = chatRoomService.getRoomById(room_id);
-        if (chatRoom != null)
-            return ResponseEntity.ok().body(messageService.findAllByRoomId(room_id));
-        else
-            return ResponseEntity.ok().body(new HashSet<Message>());
+        return ResponseEntity.ok().body(chatRoom.getMessages());
+
     }
 }
