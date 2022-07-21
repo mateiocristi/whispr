@@ -13,7 +13,7 @@ export class ChatService {
     chatChange: Subject<EndUser | undefined> = new Subject<EndUser | undefined>();
 
     chatRooms: Map<string, object> = new Map<string, object>();
-    
+
 
     constructor(private http: HttpClient) {
         this.chatChange.subscribe((value: EndUser | undefined) => {

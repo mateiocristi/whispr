@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 
+@Builder
 @Getter
 @Setter
 @ToString
@@ -18,7 +19,7 @@ public class Message {
     private String messageText;
     private long timestamp;
     private boolean isRead;
-    private MessageType type;
+//    private MessageType type;
     @ManyToOne
     private ChatRoom room;
     @ManyToOne
