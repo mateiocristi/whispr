@@ -52,6 +52,7 @@ public class  SecurityConfig extends WebSecurityConfigurerAdapter {
             cors.setAllowedOrigins(List.of("http://localhost:4200/"));
             cors.setAllowedMethods(List.of("GET","POST", "PUT", "DELETE", "OPTIONS"));
             cors.setAllowedHeaders(List.of("*"));
+            cors.setAllowCredentials(true);
             return cors;
         });
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

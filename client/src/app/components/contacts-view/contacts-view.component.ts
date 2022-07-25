@@ -11,7 +11,7 @@ import { UserService } from '../../service/user.service';
 })
 export class ContactsViewComponent implements OnInit {
 
-  searchedContact: string | undefined;
+  searchedContact?: string;
 
   constructor(private userService: UserService, private chatService: ChatService, private router: Router) {}
 
@@ -27,7 +27,9 @@ export class ContactsViewComponent implements OnInit {
           this.chatService.setEndUser(data);  
           if (data === undefined)
             console.log('end user not found');
-          else console.log('end user ' + this.chatService.getEndUser()?.username);
+          else {
+            
+          }
         }, err => {
           console.log('error ' + err);
           

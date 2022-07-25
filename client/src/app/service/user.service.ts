@@ -18,6 +18,9 @@ export class UserService {
     constructor(private cookieService: CookieService, private http: HttpClient, private router: Router) {
         this.userChange.subscribe((value: User | undefined) => {
             this.user = value;
+            console.log("user " + value);
+            
+            
         })
         this.loginWithJWT().subscribe(data => {
             this.user = data;

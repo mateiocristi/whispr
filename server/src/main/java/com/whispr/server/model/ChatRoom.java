@@ -15,7 +15,7 @@ import java.util.Set;
 @Entity
 public class ChatRoom {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     @OneToMany
     private Set<AppUser> users = new HashSet<>();

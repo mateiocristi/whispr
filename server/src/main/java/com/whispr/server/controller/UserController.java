@@ -1,7 +1,11 @@
 package com.whispr.server.controller;
 
 import com.whispr.server.model.AppUser;
+import com.whispr.server.model.ChatRoom;
 import com.whispr.server.model.EndUser;
+import com.whispr.server.model.Message;
+import com.whispr.server.repository.ChatRoomRepository;
+import com.whispr.server.service.ChatRoomService;
 import com.whispr.server.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +17,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.security.Principal;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,8 +27,8 @@ import java.security.Principal;
 @Slf4j
 public class UserController {
 
-    @Autowired
     private final UserService userService;
+    private final ChatRoomService chatRoomService;
 
     @PostMapping("/create")
     public ResponseEntity<AppUser> createUser(@RequestBody AppUser user) {
@@ -31,6 +38,9 @@ public class UserController {
 
     @GetMapping("/login")
     public ResponseEntity<?> getUserByUsername(Principal principal) {
+        // TEST
+//        Set<AppUser> users = new HashSet<AppUser>().add(userService.getUserByUsername("matei"));
+        // END
         return ResponseEntity.ok().body(userService.getUserByUsername(principal.getName()));
     }
 
@@ -44,13 +54,29 @@ public class UserController {
     }
 
     @GetMapping("getEndUser/{username}")
-    public ResponseEntity<?> getEndUser(@PathVariable String username) {
+    public ResponseEntity<EndUser> getEndUser(@PathVariable String username) {
         EndUser endUser = EndUser.builder().build();
         if (userService.checkUser(username).isPresent()) {
             endUser.setUsername(username);
             endUser.setId(userService.getUserByUsername(username).getId());
             return ResponseEntity.ok().body(endUser);
-        } else return ResponseEntity.status(403).body("user not found");
+        } return null;
+    }
+
+    @GetMapping("/getMessages/{room_id}")
+    public ResponseEntity<Set<Message>> getMessagesByChatRoomId(@PathVariable long room_id) {
+        Optional<ChatRoom> chatRoomOptional = chatRoomService.getRoomById(room_id);
+        return chatRoomOptional.map(chatRoom -> ResponseEntity.status(HttpStatus.OK).body(chatRoom.getMessages())).orElseGet(() -> ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null));
+
+    }
+
+    @GetMapping("/getRoom/{user_id}/{endUser_id}")
+    public ResponseEntity<ChatRoom> getChatRoomForUsers(@PathVariable long user_id, @PathVariable long endUser_id) {
+        System.out.println("getting room");
+        Set<AppUser> users = new HashSet<AppUser>();
+        users.add(userService.getUserById(user_id));
+        users.add(userService.getUserById(endUser_id));
+        return ResponseEntity.status(HttpStatus.OK).body(chatRoomService.getRoomByUsers(users));
     }
 
 }
