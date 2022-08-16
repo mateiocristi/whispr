@@ -17,9 +17,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.security.Principal;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -64,7 +62,7 @@ public class UserController {
     }
 
     @GetMapping("/getMessages/{room_id}")
-    public ResponseEntity<Set<Message>> getMessagesByChatRoomId(@PathVariable long room_id) {
+    public ResponseEntity<Set<Message>> getMessagesByChatRoomId(@PathVariable String room_id) {
         Optional<ChatRoom> chatRoomOptional = chatRoomService.getRoomById(room_id);
         return chatRoomOptional.map(chatRoom -> ResponseEntity.status(HttpStatus.OK).body(chatRoom.getMessages())).orElseGet(() -> ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null));
 
@@ -73,7 +71,7 @@ public class UserController {
     @GetMapping("/getRoom/{user_id}/{endUser_id}")
     public ResponseEntity<ChatRoom> getChatRoomForUsers(@PathVariable long user_id, @PathVariable long endUser_id) {
         System.out.println("getting room");
-        Set<AppUser> users = new HashSet<AppUser>();
+        List<AppUser> users = new ArrayList<>();
         users.add(userService.getUserById(user_id));
         users.add(userService.getUserById(endUser_id));
         return ResponseEntity.status(HttpStatus.OK).body(chatRoomService.getRoomByUsers(users));

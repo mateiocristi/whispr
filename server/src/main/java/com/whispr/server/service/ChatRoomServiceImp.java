@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -27,7 +28,7 @@ public class ChatRoomServiceImp implements ChatRoomService {
     }
 
     @Override
-    public Optional<ChatRoom> getRoomById(long id) {
+    public Optional<ChatRoom> getRoomById(String id) {
         return Optional.ofNullable(roomRepo.findById(id));
 
     }
@@ -38,19 +39,20 @@ public class ChatRoomServiceImp implements ChatRoomService {
     }
 
     @Override
-    public ChatRoom getRoomByUsers(Set<AppUser> users) {
-        Optional<ChatRoom> chatRoomOptional = Optional.ofNullable(roomRepo.findChatRoomByUsers(users.stream().map(AppUser::getId).collect(Collectors.toSet()), users.size()));
+    public ChatRoom getRoomByUsers(List<AppUser> users) {
+        Optional<ChatRoom> chatRoomOptional = Optional.ofNullable(roomRepo.findById(roomRepo.calcRoomId(users.get(0).getUsername(), users.get(1).getUsername())));
         if (chatRoomOptional.isEmpty()) {
             return handleChatRoom(chatRoomOptional, users);
         } else
             return chatRoomOptional.get();
     }
 
-    private ChatRoom handleChatRoom(Optional<ChatRoom> chatRoomOptional, Set<AppUser> users) {
+    private ChatRoom handleChatRoom(Optional<ChatRoom> chatRoomOptional, List<AppUser> users) {
         if (chatRoomOptional.isEmpty()) {
             System.out.println("is empty");
             ChatRoom chatRoom = ChatRoom.builder().build();
             chatRoom.setUsers(users);
+            chatRoom.setId(roomRepo.calcRoomId(users.get(0).getUsername(), users.get(1).getUsername()));
             return roomRepo.save(chatRoom);
         }
 

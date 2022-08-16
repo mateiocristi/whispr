@@ -18,9 +18,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -40,15 +38,16 @@ public class MessagingController {
         log.info("handling message xx: " + messageText + " to: " + to);
         System.out.println("handling message: " + messageText + " to: " + to);
         // todo: get chat room or create it if it does not exist
-        Set<AppUser> users = new HashSet<AppUser>();
-        users.add(userService.getUserById(from));
-        users.add(userService.getUserById(to));
+        List<AppUser> roomUsers = new ArrayList<>();
+        roomUsers.add(userService.getUserById(from));
+        roomUsers.add(userService.getUserById(to));
         Message message = Message.builder().build();
         message.setMessageText(messageText);
         message.setTimestamp(System.currentTimeMillis());
-        message.setUser(userService.getUserById(from));
+//        message.setUser(userService.getUserById(from));
         message.setRead(false);
-        message.setRoom(chatRoomService.getRoomByUsers(users));
+//        message.setRoom(chatRoomService.getRoomByUsers(roomUsers));
+
         messageService.saveMessage(message);
         simpMessagingTemplate.convertAndSend("/topic/messages/" + to, message);
     }

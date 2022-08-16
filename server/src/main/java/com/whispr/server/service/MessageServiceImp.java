@@ -14,9 +14,9 @@ import java.util.Set;
 @Transactional
 @Slf4j
 public class MessageServiceImp implements MessageService {
-    MessageRepository messageRepo;
+    private final MessageRepository messageRepo;
     @Override
-    public Set<Message> findAllByRoomId(long id) {
+    public Set<Message> findAllByRoomId(String id) {
         return (Set<Message>) messageRepo.findAllByRoomId(id);
     }
 

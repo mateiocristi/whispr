@@ -5,7 +5,7 @@ import com.whispr.server.model.Message;
 import java.util.Set;
 
 public interface MessageService {
-    Set<Message> findAllByRoomId(long id);
+    Set<Message> findAllByRoomId(String id);
     void saveMessage(Message message);
     void deleteMessage(long id);
 }
