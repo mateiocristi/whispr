@@ -1,12 +1,5 @@
-<div class="text-center">
-    <form style>
-      <img class="mt-4 mb-4" src="https://www.svgrepo.com/show/51052/vk.svg" height="72" alt="Logo">
-      <h1 class="h3 mb-3 font-weight-normal">Pssst... Welcome to Whispr!</h1>
-      <div class="mt-3">
-        <button id="login-btn"class="btn btn-lg btn-dark btn-block" (click)="handleClick($event)">Login</button>
-      </div>
-      <div class="mt-3">
-        <button id="register-btn" class="btn btn-lg btn-dark btn-block" (click)="handleClick($event)">Register</button>
-      </div>
-    </form>
+<div class="row">
+    <app-contacts-view class="home-container col-md-4 border-right bg-light"></app-contacts-view>
+    <app-chat-view class="col-md-8"></app-chat-view>
+    <!-- <app-user-profile class=""></app-user-profile> -->
 </div>

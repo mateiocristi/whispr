@@ -9,5 +9,4 @@ import lombok.NoArgsConstructor;
 @Getter
 public class MessageResponse {
     private String content;
-
 }

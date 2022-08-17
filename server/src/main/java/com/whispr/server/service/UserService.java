@@ -14,10 +14,12 @@ public interface UserService {
 
     Optional<AppUser> checkUser(String username);
 
-    AppUser getUserByUsername(String username);
+    Optional<AppUser> getUserByUsername(String username);
 
-    AppUser getUserById(long id);
-    
+    Optional<AppUser> getUserById(long id);
+
+    Optional <AppUser> getUserRefById(long id);
+
     Set<AppUser> getUsers();
 
 }

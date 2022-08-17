@@ -1,17 +1,57 @@
 package com.whispr.server.controller;
 
-import com.whispr.server.model.MessageResponse;
+import com.whispr.server.model.AppUser;
+import com.whispr.server.model.ChatRoom;
+import com.whispr.server.model.Message;
+import com.whispr.server.model.SimpleMessage;
+import com.whispr.server.service.ChatRoomService;
+import com.whispr.server.service.MessageService;
+import com.whispr.server.service.UserService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
+@RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200")
+@Slf4j
 public class MessagingController {
 
-    @MessageMapping("/chat/{roomId}")
-    @SendTo("/chat/topic/{roomId}")
-    public MessageResponse messageResponse(@DestinationVariable long roomId) {
-        return new MessageResponse("new message");
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
+    private final ChatRoomService chatRoomService;
+    private final MessageService messageService;
+    private final UserService userService;
+
+    @MessageMapping("/chat/{from}/{to}")
+    public void sendMessage(@DestinationVariable long from, @DestinationVariable long to,@Payload String messageText) {
+        log.info("handling message: " + messageText + " to: " + to);
+
+        AppUser fromUser = userService.getUserById(from).get();
+        AppUser toUser = userService.getUserById(to).get();
+
+        ChatRoom chatRoom = chatRoomService.getChatRoomById(chatRoomService.calcRoomId(fromUser.getUsername(), toUser.getUsername())).get();
+        Message message = Message.builder().build();
+
+        message.setMessageText(messageText);
+        message.setTimestamp(System.currentTimeMillis());
+        message.setUser(fromUser);
+        message.setRead(false);
+        message.setRoom(chatRoom);
+        messageService.saveMessage(message);
+
+        simpMessagingTemplate.convertAndSend("/topic/messages/" + to, new SimpleMessage(message));
     }
+
 }

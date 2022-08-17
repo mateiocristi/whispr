@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 
+@Builder
 @Getter
 @Setter
 @ToString
@@ -13,12 +14,12 @@ import javax.persistence.*;
 @Entity
 public class Message {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private String messageText;
     private long timestamp;
     private boolean isRead;
-    private MessageType type;
+//    private MessageType type;
     @ManyToOne
     private ChatRoom room;
     @ManyToOne

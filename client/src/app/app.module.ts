@@ -6,16 +6,26 @@ import {FormsModule} from "@angular/forms";
 import {HttpClientModule} from "@angular/common/http";
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppRoutingModule } from './app-routing.module';
-import { HomeComponent } from './components/home/home.component';
+import { LogonScreenComponent } from './components/logon_screen/logon_screen.component';
 import { RegisterComponent } from './components/register/register.component';
 import { LoginComponent } from './components/login/login.component';
+import { HomeComponent } from './components/home/home.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
+import { ContactsViewComponent } from './components/contacts-view/contacts-view.component';
+import { ChatViewComponent } from './components/chat-view/chat-view.component';
+import { UserProfileComponent } from './components/user-profile/user-profile.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent,
+    LogonScreenComponent,
     RegisterComponent,
-    LoginComponent
+    LoginComponent,
+    HomeComponent,
+    NavbarComponent,
+    ContactsViewComponent,
+    ChatViewComponent,
+    UserProfileComponent
   ],
     imports: [
       HttpClientModule,

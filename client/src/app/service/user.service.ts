@@ -1,35 +1,37 @@
 import { HttpClient, HttpHeaders, HttpRequest } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { Router } from "@angular/router";
 import { CookieService } from "ngx-cookie-service";
-import { ignoreElements } from "rxjs";
+import { ignoreElements, Observable, Subject } from "rxjs";
+import { Globals } from "../utils/globals"
 
 @Injectable({
-    providedIn: 'root',
+    providedIn: "root",
 })
 export class UserService {
 
-    private user: User | undefined;
+    userChange: Subject<User | undefined> = new Subject<User | undefined>();
+    user: User | undefined;
 
-    constructor(private cookieService: CookieService, private http: HttpClient) {
-        
+    chatRooms: Map<string, object> = new Map<string, object>();
+
+    constructor(private cookieService: CookieService, private http: HttpClient, private router: Router) {
+        this.userChange.subscribe((value: User | undefined) => {
+            this.user = value;
+            console.log("user " + value);
+            
+            
+        })
+        this.loginWithJWT().subscribe(data => {
+            this.user = data;
+            this.userChange.next(data);
+            this.saveCookie("currentUser", data)
+            this.router.navigateByUrl("/home");
+        });
     }
 
-    checkUsername(username: string) {
-        const headers = new HttpHeaders().set("Content-Type", "text/plain")
-        const reqOptions: Object = {
-            headers: headers,
-            responseType: 'text'
-        }
-        const req = this.http.get<string>('http://localhost:4000/user/checkUsername/' + username, reqOptions);
-        // req.subscribe(response => {
-        //         return false;
-        // })
-        return req;
-    }
+    register(username: string, password: string): Observable<any> {
 
-    async register(username: string, password: string) {
-
-        this.checkUsername(username);
         const headers = { "Content-Type": "application/json"}
         const raw = JSON.stringify({
             "username": username,
@@ -38,78 +40,86 @@ export class UserService {
         });
 
         const requestOptions = {
-            method: 'POST',
+            method: "POST",
             headers: headers,
             body: raw,
-            redirect: 'follow'
+            redirect: "follow"
         };
 
-        this.http.post<any>('http://localhost:4000/user/create', raw, requestOptions).subscribe(data => {
-            console.log(data);
-        });
+        return this.http.post<any>(Globals.API_ENDPOINT + "/user/create", raw, requestOptions)
     }
 
-    login(username: string, password: string) {
-
-        console.log('xxx ' + username + " " + password);
+    loginWithUsernameAndPassword(username: string, password: string): Observable<Jwt> {
         const headers = {"Content-Type": "application/x-www-form-urlencoded"};
         const urlencoded = new URLSearchParams();
         urlencoded.append("username", username);
         urlencoded.append("password", password);
 
         const requestOptions = {
-            method: 'POST',
+            method: "POST",
             headers: headers,
             body: urlencoded,
-            redirect: 'follow'
+            redirect: "follow"
         };
 
-       this.http.post<Jwt>('http://localhost:4000/login', urlencoded, { headers }).subscribe(
-        jwt => {
-            console.log('jwt ' + jwt);
-            
-            this.saveCookie('jwt', jwt);
-            console.log('jwt ' + (this.getCookie('jwt') || '{}'));
-            ;
-            this.getUser(username);
-        }
-       );
-        
-        
-
+       return this.http.post<Jwt>(Globals.API_ENDPOINT + "/login", urlencoded, { headers });
     }
 
-    private getUser(username: string) {
-        const headers = { "Content-Type": "application/json", "Authorization": "Bearer " + this.getCookie(('jwt') || '{}').access_token};
-        const requestOptions = {
-            method: 'POST',
+    checkUsername(username: string): Observable<string> {
+        
+        const headers = new HttpHeaders().set("Content-Type", "text/plain")
+        const reqOptions: Object = {
             headers: headers,
-            redirect: 'follow'
+            responseType: "text"
+        }
+        const req = this.http.get<string>(Globals.API_ENDPOINT + "/user/checkUsername/" + username, reqOptions);
+        return req;
+    }
+
+    loginWithJWT(): Observable<User> {
+        const access_token = this.getCookie(("jwt")).access_token;
+        console.log("access token from cookies: " + access_token);
+        
+        const headers = { "Content-Type": "application/json", "Authorization": "Bearer " + access_token};
+        const requestOptions = {
+            method: "POST",
+            headers: headers,
+            redirect: "follow"
         };
 
-        const req = this.http.get<User>('http://localhost:4000/user/get/' + username , { headers });
-        console.log("retrieved user: " + req);
-        req.subscribe(data => {
-            console.log('data ' + data.username);
-            
-            this.saveCookie('currentUser', data)
-        })
+        const req = this.http.get<User>(Globals.API_ENDPOINT + "/user/login/", { headers });
+        return req;
         
     }
 
-    private saveCookie(key: string, data: any) {
+    logout(): void {
+        this.userChange.next(undefined);
+        this.deleteCookies();
+        this.router.navigateByUrl("/");
+    }
+
+    saveCookie(key: string, data: any) {
         this.cookieService.set(key, JSON.stringify(data));
     }
 
-    private getCookie(key: string) {
-        return JSON.parse(localStorage.getItem(key) || '{}');
+    getCookie(key: string): any {
+        return JSON.parse(this.cookieService.get(key) || "{}");
     }
 
+    deleteCookies(): void {
+        this.cookieService.deleteAll();
+    }
 
+    getLocalUser() {
+        return this.getCookie("currentUser");
+    }
 
+    getUser(): User | undefined {
+        return this.user;
+    }
 }
 
-interface User {
+export interface User {
     id: bigint,
     username: string,
     password: string,

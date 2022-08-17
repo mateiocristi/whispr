@@ -26,7 +26,11 @@ public class UserServiceImp implements UserService, UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        AppUser user = userRepo.findByUsername(username);
+        Optional<AppUser> userOptional = userRepo.findByUsername(username);
+        if (userOptional.isEmpty()) {
+            throw new UsernameNotFoundException("username not found");
+        }
+        AppUser user = userOptional.get();
         Collection<SimpleGrantedAuthority> roles = new ArrayList<>();
         user.getRoles().forEach(role -> roles.add(new SimpleGrantedAuthority(role)));
         return new User(user.getUsername(), user.getPassword(), roles);
@@ -45,18 +49,22 @@ public class UserServiceImp implements UserService, UserDetailsService {
 
     @Override
     public Optional<AppUser> checkUser(String username) {
-        return Optional.ofNullable(userRepo.findByUsername(username));
-    }
-
-
-    @Override
-    public AppUser getUserByUsername(String username) {
         return userRepo.findByUsername(username);
     }
 
     @Override
-    public AppUser getUserById(long id) {
+    public Optional<AppUser> getUserByUsername(String username) {
+        return userRepo.findByUsername(username);
+    }
+
+    @Override
+    public Optional<AppUser> getUserById(long id) {
         return userRepo.findById(id);
+    }
+
+    @Override
+    public Optional<AppUser> getUserRefById(long id) {
+        return Optional.of(userRepo.getReferenceById(id));
     }
 
     @Override

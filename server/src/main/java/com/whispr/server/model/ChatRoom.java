@@ -3,21 +3,22 @@ package com.whispr.server.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Builder
 @Getter
 @Setter
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 public class ChatRoom {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private String id;
     @OneToMany
-    private Set<AppUser> users = new HashSet<>();
-    @OneToMany
-    private Set<Message> messages = new HashSet<>();
-
+    private List<AppUser> users = new ArrayList<>();
+//    @OneToMany
+//    private Set<Message> messages = new HashSet<>();
 }
