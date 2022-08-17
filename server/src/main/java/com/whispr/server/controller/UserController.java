@@ -4,20 +4,17 @@ import com.whispr.server.model.AppUser;
 import com.whispr.server.model.ChatRoom;
 import com.whispr.server.model.EndUser;
 import com.whispr.server.model.Message;
-import com.whispr.server.repository.ChatRoomRepository;
 import com.whispr.server.service.ChatRoomService;
 import com.whispr.server.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.security.Principal;
-import java.util.*;
+import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -56,25 +53,24 @@ public class UserController {
         EndUser endUser = EndUser.builder().build();
         if (userService.checkUser(username).isPresent()) {
             endUser.setUsername(username);
-            endUser.setId(userService.getUserByUsername(username).getId());
+            endUser.setId(userService.getUserByUsername(username).get().getId());
             return ResponseEntity.ok().body(endUser);
-        } return null;
+        }
+        return null;
     }
 
-    @GetMapping("/getMessages/{room_id}")
-    public ResponseEntity<Set<Message>> getMessagesByChatRoomId(@PathVariable String room_id) {
-        Optional<ChatRoom> chatRoomOptional = chatRoomService.getRoomById(room_id);
-        return chatRoomOptional.map(chatRoom -> ResponseEntity.status(HttpStatus.OK).body(chatRoom.getMessages())).orElseGet(() -> ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null));
+//    @GetMapping("/getMessages/{room_id}")
+//    public ResponseEntity<Set<Message>> getMessagesByChatRoomId(@PathVariable String room_id) {
+//        Optional<ChatRoom> chatRoomOptional = chatRoomService.getChatRoomById(room_id);
+//        return chatRoomOptional.map(chatRoom -> ResponseEntity.status(HttpStatus.OK).body(chatRoom.getMessages())).orElseGet(() -> ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null));
+//
+//    }
 
-    }
-
-    @GetMapping("/getRoom/{user_id}/{endUser_id}")
-    public ResponseEntity<ChatRoom> getChatRoomForUsers(@PathVariable long user_id, @PathVariable long endUser_id) {
-        System.out.println("getting room");
-        List<AppUser> users = new ArrayList<>();
-        users.add(userService.getUserById(user_id));
-        users.add(userService.getUserById(endUser_id));
-        return ResponseEntity.status(HttpStatus.OK).body(chatRoomService.getRoomByUsers(users));
+    @GetMapping("/getRoom/{from}/{to}")
+    public ResponseEntity<ChatRoom> getChatRoomForUsers(@PathVariable long from, @PathVariable long to) {
+        AppUser fromUser = userService.getUserById(from).get();
+        AppUser toUser = userService.getUserById(to).get();
+        return ResponseEntity.status(HttpStatus.OK).body(chatRoomService.getRoomByUsers(fromUser, toUser));
     }
 
 }

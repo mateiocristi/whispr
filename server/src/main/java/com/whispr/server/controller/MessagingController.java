@@ -3,6 +3,7 @@ package com.whispr.server.controller;
 import com.whispr.server.model.AppUser;
 import com.whispr.server.model.ChatRoom;
 import com.whispr.server.model.Message;
+import com.whispr.server.model.SimpleMessage;
 import com.whispr.server.service.ChatRoomService;
 import com.whispr.server.service.MessageService;
 import com.whispr.server.service.UserService;
@@ -35,21 +36,22 @@ public class MessagingController {
 
     @MessageMapping("/chat/{from}/{to}")
     public void sendMessage(@DestinationVariable long from, @DestinationVariable long to,@Payload String messageText) {
-        log.info("handling message xx: " + messageText + " to: " + to);
-        System.out.println("handling message: " + messageText + " to: " + to);
-        // todo: get chat room or create it if it does not exist
-        List<AppUser> roomUsers = new ArrayList<>();
-        roomUsers.add(userService.getUserById(from));
-        roomUsers.add(userService.getUserById(to));
+        log.info("handling message: " + messageText + " to: " + to);
+
+        AppUser fromUser = userService.getUserById(from).get();
+        AppUser toUser = userService.getUserById(to).get();
+
+        ChatRoom chatRoom = chatRoomService.getChatRoomById(chatRoomService.calcRoomId(fromUser.getUsername(), toUser.getUsername())).get();
         Message message = Message.builder().build();
+
         message.setMessageText(messageText);
         message.setTimestamp(System.currentTimeMillis());
-//        message.setUser(userService.getUserById(from));
+        message.setUser(fromUser);
         message.setRead(false);
-//        message.setRoom(chatRoomService.getRoomByUsers(roomUsers));
-
+        message.setRoom(chatRoom);
         messageService.saveMessage(message);
-        simpMessagingTemplate.convertAndSend("/topic/messages/" + to, message);
+
+        simpMessagingTemplate.convertAndSend("/topic/messages/" + to, new SimpleMessage(message));
     }
 
 }

@@ -19,11 +19,6 @@ public class ChatRoom {
     private String id;
     @OneToMany
     private List<AppUser> users = new ArrayList<>();
-    @OneToMany
-    private Set<Message> messages = new HashSet<>();
-
-//    public String calcRoomId(String username1, String username2) {
-//        return username1.compareTo(username2) > 0 ? username1 + username2  : username2 + username1;
-//    }
-
+//    @OneToMany
+//    private Set<Message> messages = new HashSet<>();
 }
