@@ -18,10 +18,12 @@ public class SimpleMessage {
     private boolean isRead;
     //    private MessageType type;
     private String chatRoomId;
+
     private long userId;
 
     public SimpleMessage(Message message) {
         this.id = message.getId();
+        this.userId = message.getUser().getId();
         this.chatRoomId = message.getRoom().getId();
         this.messageText = message.getMessageText();
         this.timestamp = message.getTimestamp();

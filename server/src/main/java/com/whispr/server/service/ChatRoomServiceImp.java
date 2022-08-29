@@ -2,15 +2,16 @@ package com.whispr.server.service;
 
 import com.whispr.server.model.AppUser;
 import com.whispr.server.model.ChatRoom;
-import com.whispr.server.model.Message;
 import com.whispr.server.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -45,20 +46,16 @@ public class ChatRoomServiceImp implements ChatRoomService {
     public ChatRoom getRoomByUsers(AppUser user1, AppUser user2) {
         Optional<ChatRoom> chatRoomOptional = roomRepo.findById(calcRoomId(user1.getUsername(), user2.getUsername()));
         if (chatRoomOptional.isEmpty()) {
-            return handleChatRoom(chatRoomOptional, user1, user2);
+            return createNewChatRoom(user1, user2);
         } else
             return chatRoomOptional.get();
     }
 
-    private ChatRoom handleChatRoom(Optional<ChatRoom> chatRoomOptional, AppUser user1, AppUser user2) {
-        if (chatRoomOptional.isEmpty()) {
-            log.info("chat room not found ... creating a new one");
-            ChatRoom chatRoom = ChatRoom.builder().build();
-            chatRoom.setUsers(Arrays.asList(user1, user2));
-            chatRoom.setId(calcRoomId(user1.getUsername(), user2.getUsername()));
-            return roomRepo.save(chatRoom);
-        }
-        else
-            return chatRoomOptional.get();
+    private ChatRoom createNewChatRoom(AppUser user1, AppUser user2) {
+        log.info("chat room not found ... creating a new one with id: " + calcRoomId(user1.getUsername(), user2.getUsername()));
+        ChatRoom chatRoom = ChatRoom.builder().build();
+        chatRoom.setUsers(Arrays.asList(user1, user2));
+        chatRoom.setId(calcRoomId(user1.getUsername(), user2.getUsername()));
+        return roomRepo.save(chatRoom);
     }
 }

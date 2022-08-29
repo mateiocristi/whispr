@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { ChatService } from 'src/app/service/chat.service';
 import { UserService } from '../../service/user.service';
 
 @Component({
@@ -8,9 +10,13 @@ import { UserService } from '../../service/user.service';
 })
 export class HomeComponent implements OnInit {
   
-  otherUsername: string = "";
+  // otherUsername: string = "";
+  // currentUserChange: Subscription = this.userService.userChange.subscribe(data => {
+  //   this.chatSerive.connectToChat();
+  // }
+  // );
 
-  constructor(private userService: UserService) { }
+  constructor(private userService: UserService, private chatSerive: ChatService) { }
 
   ngOnInit(): void {
       

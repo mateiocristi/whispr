@@ -19,24 +19,25 @@ export class ContactsViewComponent implements OnInit {
 
   }
 
+  // data => {
+  //   console.log("end data is " + data);
+  //   this.chatService.setEndUser(data);  
+  //   if (data === undefined)
+  //     console.log('end user not found');
+  //   else {
+      
+  //   }
+  // }
+
   handleSearch(event: Event): void {
     console.log("searching for user");
     if (this.searchedContact !== this.userService.getUser()!.username) {
-        this.chatService.fetchEndUser(this.searchedContact!).subscribe(data => {
-          console.log("end data is " + data);
-          this.chatService.setEndUser(data);  
-          if (data === undefined)
-            console.log('end user not found');
-          else {
-            
-          }
-        }, err => {
-          console.log('error ' + err);
-          
+        this.chatService.fetchEndUser(this.searchedContact!).subscribe({
+          next: (data) => this.chatService.setEndUser(data),
+          error: (e) => console.error(e)
         });
     } else {
-      console.log("no good");
-      console.log(this.userService.getUser()!.username);
+      console.log("current username was introduced");
     }
   }
 }

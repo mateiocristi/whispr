@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -16,8 +17,8 @@ import java.util.Set;
 public class MessageServiceImp implements MessageService {
     private final MessageRepository messageRepo;
     @Override
-    public Set<Message> findAllByRoomId(String id) {
-        return (Set<Message>) messageRepo.findAllByRoomId(id);
+    public List<Message> findAllByRoomId(String id) {
+        return messageRepo.findAllByRoomId(id);
     }
 
     @Override
