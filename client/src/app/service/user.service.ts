@@ -4,6 +4,7 @@ import { Router } from "@angular/router";
 import { CookieService } from "ngx-cookie-service";
 import { ignoreElements, Observable, Subject } from "rxjs";
 import { Globals } from "../utils/globals"
+import { ChatService } from "./chat.service";
 
 @Injectable({
     providedIn: "root",
@@ -25,7 +26,7 @@ export class UserService {
         this.loginWithJWT().subscribe(data => {
             this.user = data;
             this.userChange.next(data);
-            this.saveCookie("currentUser", data)
+            this.saveCookie("currentUser", data);
             this.router.navigateByUrl("/home");
         });
     }

@@ -5,6 +5,7 @@ import com.whispr.server.model.ChatRoom;
 import com.whispr.server.model.EndUser;
 import com.whispr.server.model.Message;
 import com.whispr.server.service.ChatRoomService;
+import com.whispr.server.service.MessageService;
 import com.whispr.server.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -24,6 +26,8 @@ public class UserController {
 
     private final UserService userService;
     private final ChatRoomService chatRoomService;
+
+    private final MessageService messageService;
 
     @PostMapping("/create")
     public ResponseEntity<AppUser> createUser(@RequestBody AppUser user) {
@@ -48,7 +52,7 @@ public class UserController {
         return ResponseEntity.ok().body("not found");
     }
 
-    @GetMapping("getEndUser/{username}")
+    @GetMapping("/getEndUser/{username}")
     public ResponseEntity<EndUser> getEndUser(@PathVariable String username) {
         EndUser endUser = EndUser.builder().build();
         if (userService.checkUser(username).isPresent()) {
@@ -59,12 +63,11 @@ public class UserController {
         return null;
     }
 
-//    @GetMapping("/getMessages/{room_id}")
-//    public ResponseEntity<Set<Message>> getMessagesByChatRoomId(@PathVariable String room_id) {
-//        Optional<ChatRoom> chatRoomOptional = chatRoomService.getChatRoomById(room_id);
-//        return chatRoomOptional.map(chatRoom -> ResponseEntity.status(HttpStatus.OK).body(chatRoom.getMessages())).orElseGet(() -> ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null));
-//
-//    }
+    @GetMapping("/getMessages/{room_id}")
+    public ResponseEntity<List<Message>> getMessagesByChatRoomId(@PathVariable String room_id) {
+        return ResponseEntity.status(HttpStatus.OK).body(messageService.findAllByRoomId(room_id));
+
+    }
 
     @GetMapping("/getRoom/{from}/{to}")
     public ResponseEntity<ChatRoom> getChatRoomForUsers(@PathVariable long from, @PathVariable long to) {

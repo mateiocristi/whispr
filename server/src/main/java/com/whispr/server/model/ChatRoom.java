@@ -17,7 +17,7 @@ import java.util.Set;
 public class ChatRoom {
     @Id
     private String id;
-    @OneToMany
+    @ManyToMany
     private List<AppUser> users = new ArrayList<>();
 //    @OneToMany
 //    private Set<Message> messages = new HashSet<>();

@@ -36,7 +36,7 @@ public class MessagingController {
 
     @MessageMapping("/chat/{from}/{to}")
     public void sendMessage(@DestinationVariable long from, @DestinationVariable long to,@Payload String messageText) {
-        log.info("handling message: " + messageText + " to: " + to);
+        log.info("handling message: " + messageText + " from: " + from + " to: " + to);
 
         AppUser fromUser = userService.getUserById(from).get();
         AppUser toUser = userService.getUserById(to).get();
@@ -51,7 +51,10 @@ public class MessagingController {
         message.setRoom(chatRoom);
         messageService.saveMessage(message);
 
-        simpMessagingTemplate.convertAndSend("/topic/messages/" + to, new SimpleMessage(message));
+        log.info("message user id: " + message.getUser().getId());
+
+        // to do: add the destination id to uri
+        simpMessagingTemplate.convertAndSend("/topic/messages/" + toUser.getId() , new SimpleMessage(message));
     }
 
 }
