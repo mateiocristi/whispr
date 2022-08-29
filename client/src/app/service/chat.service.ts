@@ -16,10 +16,11 @@ export class ChatService {
 
     otherUser?: EndUser;
     currentRoom?: ChatRoom;
+    messages?: Array<Message>;
     socket?: WebSocket;
     stompClient?: Stomp.Client;  
 
-    newMessage: Subject<Message> = new Subject<Message>();
+    newMessage: Subject<Array<Message>> = new Subject<Array<Message>>();
     roomChange: Subject<EndUser | undefined> = new Subject<EndUser | undefined>();
     
     constructor(private http: HttpClient, private userService: UserService) {
@@ -31,8 +32,8 @@ export class ChatService {
             console.log("end user change to " + user);
             
         });
-        this.newMessage.subscribe((message: Message) => {
-            this.currentRoom!.messages.add(message)
+        this.newMessage.subscribe((messages: Array<Message>) => {
+            this.messages = messages;
         }) 
         
     }
@@ -54,8 +55,8 @@ export class ChatService {
                     // this.loadChat();
                     let message: Message = JSON.parse(response.body)
                     console.log("new message ", message);
-                    alert("message: " + message.messageText);
                     // this.newMessage.next(message);
+                    this.loadChat();
                 }
             )
         }, err => {
@@ -80,9 +81,13 @@ export class ChatService {
         return this.http.get<ChatRoom>(Globals.API_ENDPOINT +  "/user/getRoom/" + this.userService.getUser()!.id + "/" + endUser.id, { headers });
     }
 
-    loadChat(): Observable<Array<Message>> {
+    loadChat(): void {
         const headers = { "Content-Type": "application/json"}
-        return this.http.get<Array<Message>>(Globals.API_ENDPOINT + "/user/getMessages/" + this.currentRoom!.id, { headers });
+        const req = this.http.get<Array<Message>>(Globals.API_ENDPOINT + "/user/getMessages/" + this.currentRoom!.id, { headers });
+        req.subscribe(data => {
+            console.table(data);
+            this.newMessage.next(data);
+        })
         // messages.subscribe(data => {
         //     console.log("pipi");
             
@@ -127,8 +132,8 @@ export interface EndUser {
 
 export interface ChatRoom {
     id: bigint;
-    users: Set<EndUser>;
-    messages: Set<Message>;
+    users: Array<EndUser>;
+    // messages: Array<Message>;
 }
 
 export interface Message {

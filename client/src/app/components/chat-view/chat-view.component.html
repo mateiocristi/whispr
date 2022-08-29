@@ -1,5 +1,5 @@
 <div *ngIf="isEndUser" class="chat-panel">
-  <div *ngFor="let message of messages | async">
+  <div *ngFor="let message of messages">
     <div *ngIf="message.user.id === endUser!.id" class="row no-gutters">
       <div class="col-md-3">
         <div class="chat-bubble chat-bubble--left">
@@ -7,14 +7,13 @@
         </div>
       </div>
     </div>
-    
-      <div *ngIf="message.user.id === endUser!.id" class="row no-gutters">
-        <div class="col-md-3 offset-md-9">
-          <div class="chat-bubble chat-bubble--right">
-            {{ message.messageText }}
-          </div>
+    <div *ngIf="message.user.id !== endUser!.id" class="row no-gutters">
+      <div class="col-md-3 offset-md-9">
+        <div class="chat-bubble chat-bubble--right">
+          {{ message.messageText }}
         </div>
       </div>
+    </div>
   </div>
   <div class="row">
     <div class="col-12">

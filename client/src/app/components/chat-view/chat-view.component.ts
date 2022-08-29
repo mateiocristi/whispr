@@ -16,14 +16,13 @@ export class ChatViewComponent implements OnInit {
   isEndUser: boolean = false;
   currentRoom?: ChatRoom;
   messageText?: string; 
-  messages!: Observable<Array<Message>>;
+  messages!: Array<Message>;
 
-  // newMessage: Subscription = this.chatService.newMessage.subscribe((data) => {
-  //   console.log("new message received");
-  //   console.table(data);
-  //   console.table(this.currentRoom?.messages);
-  //   this.messages! = new Array<Message>(...data);
-  // });
+  newMessage: Subscription = this.chatService.newMessage.subscribe((data) => {
+    console.log("new message received");
+    console.table(data);
+    this.messages = data;
+  });
 
   endUserChange: Subscription = this.chatService.roomChange.subscribe((data) => {
     console.log("end user changed");
@@ -33,13 +32,15 @@ export class ChatViewComponent implements OnInit {
     console.log("end user " + this.chatService.otherUser?.username);
     
     this.chatService.getChatRoom(data!).subscribe(data => {
+      
       this.chatService.currentRoom = data;
-      this.chatService.loadChat().subscribe((data) => {
-        this.messages = of(data);
-      })
-      console.log("room id: " + this.chatService.currentRoom.id);
-      console.log("messages: " + this.chatService.currentRoom.messages);
-      console.log("users: " + this.chatService.currentRoom.users);
+      this.chatService.loadChat();
+      // this.chatService.loadChat().subscribe((data) => {
+      //   this.messages = of(data);
+      // })
+      // console.log("room id: " + this.chatService.currentRoom.id);
+      // console.log("messages: " + this.chatService.currentRoom.messages);
+      // console.log("users: " + this.chatService.currentRoom.users);
       
       
     })
@@ -56,6 +57,7 @@ export class ChatViewComponent implements OnInit {
 
   ngOnDestroy(): void {
     this.endUserChange.unsubscribe();
+    this.newMessage.unsubscribe();
   }
 
   // loadChat(data: any) {

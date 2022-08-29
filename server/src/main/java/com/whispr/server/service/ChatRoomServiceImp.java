@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -45,12 +46,12 @@ public class ChatRoomServiceImp implements ChatRoomService {
     public ChatRoom getRoomByUsers(AppUser user1, AppUser user2) {
         Optional<ChatRoom> chatRoomOptional = roomRepo.findById(calcRoomId(user1.getUsername(), user2.getUsername()));
         if (chatRoomOptional.isEmpty()) {
-            return handleChatRoom(user1, user2);
+            return createNewChatRoom(user1, user2);
         } else
             return chatRoomOptional.get();
     }
 
-    private ChatRoom handleChatRoom(AppUser user1, AppUser user2) {
+    private ChatRoom createNewChatRoom(AppUser user1, AppUser user2) {
         log.info("chat room not found ... creating a new one with id: " + calcRoomId(user1.getUsername(), user2.getUsername()));
         ChatRoom chatRoom = ChatRoom.builder().build();
         chatRoom.setUsers(Arrays.asList(user1, user2));

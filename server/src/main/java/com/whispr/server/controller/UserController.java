@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -73,7 +74,8 @@ public class UserController {
     public ResponseEntity<ChatRoom> getChatRoomForUsers(@PathVariable long from, @PathVariable long to) {
         AppUser fromUser = userService.getUserById(from).get();
         AppUser toUser = userService.getUserById(to).get();
-        return ResponseEntity.status(HttpStatus.OK).body(chatRoomService.getRoomByUsers(fromUser, toUser));
+        ChatRoom ch = chatRoomService.getRoomByUsers(fromUser, toUser);
+        return ResponseEntity.status(HttpStatus.OK).body(ch);
     }
 
 }
