@@ -14,33 +14,44 @@ import { JsonPipe } from "@angular/common";
 })
 export class ChatService {
 
-    otherUser?: EndUser;
-    currentRoom?: ChatRoom;
-    messages?: Array<Message>;
-    socket?: WebSocket;
-    stompClient?: Stomp.Client;  
+    private chatRooms?: Array<ChatRoom>;
+    private endUser?: EndUser;
+    private currentRoom?: ChatRoom;
+    private socket?: WebSocket;
+    private stompClient?: Stomp.Client;  
 
     newMessage: Subject<Array<Message>> = new Subject<Array<Message>>();
-    roomChange: Subject<EndUser | undefined> = new Subject<EndUser | undefined>();
+    roomChange: Subject<ChatRoom | undefined> = new Subject<ChatRoom | undefined>();
     
     constructor(private http: HttpClient, private userService: UserService) {
-
+        
         console.log("init chat service...");
-   
-        this.roomChange.subscribe((user: EndUser | undefined) => {
-            this.otherUser = user;
-            console.log("end user change to " + user);
+
+        this.chatRooms = new Array<ChatRoom>();
+
+        this.userService.userChange.subscribe(() => {
+            this.connectToChat();
+            this.fetchAllChatRooms().subscribe(data => {
+                this.chatRooms! = data;
+            })
+        })
+
+        this.roomChange.subscribe((chatRoom: ChatRoom | undefined) => {
+            console.log("setting chat room");
             
+            chatRoom!.messages = new Array<Message>(); // era cu any
+            this.currentRoom = chatRoom;
+            this.chatRooms!.push(chatRoom!);
+            this.endUser = chatRoom!.users[0] !== userService.getUser() ? chatRoom!.users[0] : chatRoom!.users[1]; 
         });
         this.newMessage.subscribe((messages: Array<Message>) => {
-            this.messages = messages;
-        }) 
+            this.currentRoom!.messages = messages;
+        }); 
         
     }
 
     connectToChat(): void {
         const thisId = this.userService.getUser()?.id;
-        const otherId = this.otherUser?.id;
         // load chat ...
         console.log("connecting to chat...");
         
@@ -52,11 +63,9 @@ export class ChatService {
                 "/topic/messages/" + thisId, 
                 (response) => {
                     // handle the message
-                    // this.loadChat();
                     let message: Message = JSON.parse(response.body)
                     console.log("new message ", message);
-                    // this.newMessage.next(message);
-                    this.loadChat();
+                    this.loadAllChat();
                 }
             )
         }, err => {
@@ -65,63 +74,60 @@ export class ChatService {
         });
     }
 
-    sendMessage(message?: string): void {
+    sendMessage(message?: string) {
         console.log("message to be sent is " + message);
     
         if (message !== undefined) {
             console.log("message is sending...");
             
             this.stompClient!.send("/app/chat/" + this.userService.getUser()!.id + "/" + this.getEndUser()!.id, {}, message);
-            // this.newMessage.next()
+            this.loadAllChat();
         }
     }
 
-    getChatRoom(endUser: EndUser): Observable<ChatRoom> {
-        const headers = { "Content-Type": "application/json"};
-        return this.http.get<ChatRoom>(Globals.API_ENDPOINT +  "/user/getRoom/" + this.userService.getUser()!.id + "/" + endUser.id, { headers });
+    fetchAllChatRooms(): Observable<Array<ChatRoom>> {
+        const headers = {"Content-Type": "application/json" }
+        return this.http.get<Array<ChatRoom>>(Globals.API_ENDPOINT + "/user/getAllChatRooms/" + this.userService.getUser()!.id);
     }
 
-    loadChat(): void {
-        const headers = { "Content-Type": "application/json"}
+    fetchChatRoom(endUsername: String): Observable<ChatRoom> {
+        const headers = {"Content-Type": "application/json"};
+        return this.http.get<ChatRoom>(Globals.API_ENDPOINT +  "/user/getChatRoom/" + this.userService.getUser()!.username + "/" + endUsername, { headers });
+    }
+
+    setChatRoom(chatRoom: ChatRoom) {
+        this.roomChange!.next(chatRoom);
+    }
+
+    getChatRoom(): ChatRoom {
+        return this.currentRoom!;
+    }
+
+    getAllChatRooms(): Array<ChatRoom> {
+        return this.chatRooms!;
+    }
+
+    loadAllChat(): void {
+        const headers = {"Content-Type": "application/json"}
         const req = this.http.get<Array<Message>>(Globals.API_ENDPOINT + "/user/getMessages/" + this.currentRoom!.id, { headers });
         req.subscribe(data => {
-            console.table(data);
             this.newMessage.next(data);
-        })
-        // messages.subscribe(data => {
-        //     console.log("pipi");
-            
-        //     console.table(data);
-        //     messages = of(data);
-        //     // this.newMessage.next(data);
-        // })
-        // // console.log("messages: " + this.currentRoom!.messages);
+        });
     }
 
-    fetchEndUser(username: string): Observable<EndUser> {
-        console.log('checking user ' + username);
-        
-        const headers = new HttpHeaders().set("Content-Type", "application/json");
-        // const reqOptions: Object = {
-        //     headers: headers,
-        //     responseType: "json"
-        // }
-        const req = this.http.get<EndUser>(Globals.API_ENDPOINT + "/user/getEndUser/" + username, { headers });
-        return req;
-    }
+    // fetchEndUser(username: string): Observable<EndUser> {
+    //     console.log('checking user ' + username);
+    //     const headers = new HttpHeaders().set("Content-Type", "application/json");
+    //     const req = this.http.get<EndUser>(Globals.API_ENDPOINT + "/user/getEndUser/" + username, { headers });
+    //     return req;
+    // }
 
-    setEndUser(user: EndUser | undefined): void {
-        this.roomChange!.next(user);
-        console.log("end user ", this.otherUser);
-        
+    setEndUser(user: EndUser) {
+        this.endUser = user;
     }
 
     getEndUser(): EndUser{
-        return this.otherUser!;
-    }
-
-    getEndUserFromServer() {
-
+        return this.endUser!;
     }
 }
 
@@ -133,7 +139,7 @@ export interface EndUser {
 export interface ChatRoom {
     id: bigint;
     users: Array<EndUser>;
-    // messages: Array<Message>;
+    messages: Array<any>;
 }
 
 export interface Message {

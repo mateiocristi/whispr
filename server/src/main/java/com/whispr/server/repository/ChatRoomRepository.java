@@ -12,4 +12,6 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, String> {
+    @Query(value = "select * from chat_room cr inner join chat_room_users cru on cr.id = cru.chat_room_id where cru.users_id = :userId", nativeQuery = true)
+    List<ChatRoom> findAllByUser_usersId(@Param("userId") long userId);
 }

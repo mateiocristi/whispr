@@ -1,5 +1,5 @@
 <div *ngIf="isEndUser" class="chat-panel">
-  <div *ngFor="let message of messages">
+  <div *ngFor="let message of this.currentRoom!.messages">
     <div *ngIf="message.user.id === endUser!.id" class="row no-gutters">
       <div class="col-md-3">
         <div class="chat-bubble chat-bubble--left">
@@ -26,24 +26,4 @@
       </div>
     </div>
   </div>
-  <!-- <div *ngFor="let message of this.messages | async">
-    <div class="row no-gutters">
-      <div class="col-md-3">
-        <div class="chat-bubble chat-bubble--left">
-          {{ message.messageText }}
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-12">
-      <div class="chat-box-tray input-group p-2" style="bottom: 0;margin-top: auto;">
-        <input type="text" class="form-control" placeholder="Enter a message" aria-label="Recipient's username"
-          aria-describedby="basic-addon2" [(ngModel)]="messageText">
-        <div class="input-group-append">
-          <button class="btn btn-outline-secondary" type="button" (click)="sendButtonHandler($event)">Send</button>
-        </div>
-      </div>
-    </div>
-  </div> -->
 </div>

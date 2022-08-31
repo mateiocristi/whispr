@@ -17,7 +17,6 @@ import java.util.Set;
 @SpringBootApplication
 public class WhisprApplication {
 
-
     public static void main(String[] args) {
         SpringApplication.run(WhisprApplication.class, args);
     }
@@ -26,6 +25,5 @@ public class WhisprApplication {
     PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
-
 
 }

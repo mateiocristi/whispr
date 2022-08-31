@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static org.springframework.http.HttpStatus.OK;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
@@ -66,16 +68,29 @@ public class UserController {
 
     @GetMapping("/getMessages/{room_id}")
     public ResponseEntity<List<Message>> getMessagesByChatRoomId(@PathVariable String room_id) {
-        return ResponseEntity.status(HttpStatus.OK).body(messageService.findAllByRoomId(room_id));
+        return ResponseEntity.status(OK).body(messageService.findAllByRoomId(room_id));
 
     }
 
-    @GetMapping("/getRoom/{from}/{to}")
-    public ResponseEntity<ChatRoom> getChatRoomForUsers(@PathVariable long from, @PathVariable long to) {
-        AppUser fromUser = userService.getUserById(from).get();
-        AppUser toUser = userService.getUserById(to).get();
+//    @GetMapping("/getChatRoom/{from_id}/{to_id}")
+//    public ResponseEntity<ChatRoom> getChatRoomForUsersIds(@PathVariable long from_id, @PathVariable long to_id) {
+//        AppUser fromUser = userService.getUserById(from_id).get();
+//        AppUser toUser = userService.getUserById(to_id).get();
+//        ChatRoom ch = chatRoomService.getRoomByUsers(fromUser, toUser);
+//        return ResponseEntity.status(HttpStatus.OK).body(ch);
+//    }
+
+    @GetMapping("/getAllChatRooms/{userId}")
+    public ResponseEntity<List<ChatRoom>> getAllChatRooms(@PathVariable long userId) {
+        return ResponseEntity.status(OK).body(chatRoomService.getAllRooms(userId));
+    }
+
+    @GetMapping("/getChatRoom/{from_username}/{to_username}")
+    public ResponseEntity<ChatRoom> getChatRoomForUsernames(@PathVariable String from_username, @PathVariable String to_username) {
+        AppUser fromUser = userService.getUserByUsername(from_username).get();
+        AppUser toUser = userService.getUserByUsername(to_username).get();
         ChatRoom ch = chatRoomService.getRoomByUsers(fromUser, toUser);
-        return ResponseEntity.status(HttpStatus.OK).body(ch);
+        return ResponseEntity.status(OK).body(ch);
     }
 
 }

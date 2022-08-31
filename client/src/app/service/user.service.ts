@@ -11,10 +11,10 @@ import { ChatService } from "./chat.service";
 })
 export class UserService {
 
-    userChange: Subject<User | undefined> = new Subject<User | undefined>();
     user: User | undefined;
-
-    chatRooms: Map<string, object> = new Map<string, object>();
+    
+    // chatRooms: Map<string, object> = new Map<string, object>();
+    userChange: Subject<User | undefined> = new Subject<User | undefined>();
 
     constructor(private cookieService: CookieService, private http: HttpClient, private router: Router) {
         this.userChange.subscribe((value: User | undefined) => {

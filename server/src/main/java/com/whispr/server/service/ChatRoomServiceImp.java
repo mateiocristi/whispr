@@ -8,10 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -22,9 +19,8 @@ public class ChatRoomServiceImp implements ChatRoomService {
     private final ChatRoomRepository roomRepo;
 
     @Override
-    public Set<ChatRoom> getAllRooms() {
-//        return (Set<ChatRoom>) roomRepo.findAll();
-        return null;
+    public List<ChatRoom> getAllRooms(long id) {
+        return roomRepo.findAllByUser_usersId(id);
     }
 
     @Override
