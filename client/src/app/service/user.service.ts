@@ -11,24 +11,26 @@ import { ChatService } from "./chat.service";
 })
 export class UserService {
 
-    user: User | undefined;
+    private user?: User;
     
     // chatRooms: Map<string, object> = new Map<string, object>();
     userChange: Subject<User | undefined> = new Subject<User | undefined>();
 
     constructor(private cookieService: CookieService, private http: HttpClient, private router: Router) {
-        this.userChange.subscribe((value: User | undefined) => {
-            this.user = value;
-            console.log("user " + value);
-            
-            
-        })
+        
         this.loginWithJWT().subscribe(data => {
             this.user = data;
             this.userChange.next(data);
             this.saveCookie("currentUser", data);
-            this.router.navigateByUrl("/home");
         });
+
+        this.userChange.subscribe((user: User | undefined) => {
+            this.user = user;
+            if (user !== undefined)
+                this.router.navigateByUrl("/home");
+            else
+                this.router.navigateByUrl("/");    
+        })
     }
 
     register(username: string, password: string): Observable<any> {
@@ -67,7 +69,6 @@ export class UserService {
     }
 
     checkUsername(username: string): Observable<string> {
-        
         const headers = new HttpHeaders().set("Content-Type", "text/plain")
         const reqOptions: Object = {
             headers: headers,
@@ -87,10 +88,8 @@ export class UserService {
             headers: headers,
             redirect: "follow"
         };
-
         const req = this.http.get<User>(Globals.API_ENDPOINT + "/user/login/", { headers });
         return req;
-        
     }
 
     logout(): void {
@@ -111,10 +110,6 @@ export class UserService {
         this.cookieService.deleteAll();
     }
 
-    getLocalUser() {
-        return this.getCookie("currentUser");
-    }
-
     getUser(): User | undefined {
         return this.user;
     }
@@ -126,7 +121,6 @@ export interface User {
     password: string,
     rooms: [],
     roles: [],
-    messages: []
 }
 
 interface Jwt {

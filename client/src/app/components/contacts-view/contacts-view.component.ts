@@ -12,19 +12,29 @@ import { UserService } from '../../service/user.service';
 export class ContactsViewComponent implements OnInit {
 
   searchedContact?: string;
-  chatRooms!: Array<ChatRoom>; 
+  chatRooms?: Set<ChatRoom>; 
 
+  // todo: not good practice
   userChange: Subscription = this.userService.userChange.subscribe(() => {
-    this.chatService.fetchAllChatRooms().subscribe(data => {
-      this.chatRooms! = data;
-    });
+    console.log("fetching rooms..");
+    
+
+    // this.chatService.fetchAllChatRooms().subscribe(data => {
+    //   this.chatRooms = new Set<ChatRoom>(data);
+    //   console.log("chat rooms: " + data);
+      
+    // });
   });
 
   constructor(private userService: UserService, private chatService: ChatService, private router: Router) {
-    this.chatRooms = new Array<ChatRoom>();
+    this.chatRooms = new Set<ChatRoom>(chatService.getAllChatRooms());
   }
 
   ngOnInit(): void {
+  }
+
+  ngOnDestroy() :void {
+
   }
 
   handleSearch(event: Event): void {

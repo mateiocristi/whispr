@@ -14,7 +14,7 @@ import { JsonPipe } from "@angular/common";
 })
 export class ChatService {
 
-    private chatRooms?: Array<ChatRoom>;
+    private chatRooms?: Set<ChatRoom>;
     private endUser?: EndUser;
     private currentRoom?: ChatRoom;
     private socket?: WebSocket;
@@ -27,12 +27,12 @@ export class ChatService {
         
         console.log("init chat service...");
 
-        this.chatRooms = new Array<ChatRoom>();
+        this.chatRooms = new Set<ChatRoom>();
 
         this.userService.userChange.subscribe(() => {
             this.connectToChat();
             this.fetchAllChatRooms().subscribe(data => {
-                this.chatRooms! = data;
+                this.chatRooms! = new Set<ChatRoom>(data);
             })
         })
 
@@ -41,7 +41,7 @@ export class ChatService {
             
             chatRoom!.messages = new Array<Message>(); // era cu any
             this.currentRoom = chatRoom;
-            this.chatRooms!.push(chatRoom!);
+            this.chatRooms!.add(chatRoom!);
             this.endUser = chatRoom!.users[0] !== userService.getUser() ? chatRoom!.users[0] : chatRoom!.users[1]; 
         });
         this.newMessage.subscribe((messages: Array<Message>) => {
@@ -103,7 +103,7 @@ export class ChatService {
         return this.currentRoom!;
     }
 
-    getAllChatRooms(): Array<ChatRoom> {
+    getAllChatRooms(): Set<ChatRoom> {
         return this.chatRooms!;
     }
 
@@ -115,12 +115,6 @@ export class ChatService {
         });
     }
 
-    // fetchEndUser(username: string): Observable<EndUser> {
-    //     console.log('checking user ' + username);
-    //     const headers = new HttpHeaders().set("Content-Type", "application/json");
-    //     const req = this.http.get<EndUser>(Globals.API_ENDPOINT + "/user/getEndUser/" + username, { headers });
-    //     return req;
-    // }
 
     setEndUser(user: EndUser) {
         this.endUser = user;
