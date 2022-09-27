@@ -3,12 +3,13 @@ package com.whispr.server.service;
 import com.whispr.server.model.AppUser;
 import com.whispr.server.model.ChatRoom;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 public interface ChatRoomService {
 
-    Set<ChatRoom> getAllRooms();
+    List<ChatRoom> getAllRooms(long id);
 
     Optional<ChatRoom> getChatRoomById(String id);
 

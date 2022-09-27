@@ -1,8 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Observable, of, Subscription } from 'rxjs';
-import { ChatRoom, ChatService, EndUser, Message } from 'src/app/service/chat.service';
-import { User, UserService } from 'src/app/service/user.service';
+import { ChatRoom, EndUser, User, UserService } from 'src/app/service/user.service';
 import { Globals } from 'src/app/utils/globals';
 
 @Component({
@@ -16,65 +15,41 @@ export class ChatViewComponent implements OnInit {
   isEndUser: boolean = false;
   currentRoom?: ChatRoom;
   messageText?: string; 
-  messages!: Array<Message>;
 
-  newMessage: Subscription = this.chatService.newMessage.subscribe((data) => {
-    console.log("new message received");
-    console.table(data);
-    this.messages = data;
-  });
+  // newMessage: Subscription = this.chatService.newMessage.subscribe((data) => {
+  //   console.log("new message received");
 
-  endUserChange: Subscription = this.chatService.roomChange.subscribe((data) => {
-    console.log("end user changed");
-    
-    this.endUser = this.chatService.getEndUser();
-    this.isEndUser = true ? this.chatService.otherUser !== undefined : false;
-    console.log("end user " + this.chatService.otherUser?.username);
-    
-    this.chatService.getChatRoom(data!).subscribe(data => {
-      
-      this.chatService.currentRoom = data;
-      this.chatService.loadChat();
-      // this.chatService.loadChat().subscribe((data) => {
-      //   this.messages = of(data);
-      // })
-      // console.log("room id: " + this.chatService.currentRoom.id);
-      // console.log("messages: " + this.chatService.currentRoom.messages);
-      // console.log("users: " + this.chatService.currentRoom.users);
-      
-      
-    })
-    // todo: update current room
-  });
+  //   this.currentRoom!.messages = data;
+  // });
 
-  constructor(private userService: UserService, private chatService: ChatService, private http: HttpClient) {
-    this.endUser = chatService.getEndUser();
+  chatRoomChange: Subscription = this.userService.roomChange.subscribe((data) => {
+    console.log("chat room changed");
+    this.currentRoom = data;
+    this.endUser = data?.users[0].username !== this.userService.getUser()!.username ? data!.users[0] : data!.users[1];
+    this.userService.setEndUser(this.endUser);
+    this.isEndUser = true ? this.endUser !== undefined : false;
+  })
+
+  constructor(private userService: UserService, private http: HttpClient) {
+    this.currentRoom = userService.getChatRoom();
+    // console.log("end user " + this.endUser?.username);
+    // console.log("current room" + this.currentRoom?.id);    
   }
 
   ngOnInit(): void {
-    this.chatService.connectToChat();
   }
 
   ngOnDestroy(): void {
-    this.endUserChange.unsubscribe();
-    this.newMessage.unsubscribe();
+    // this.chatService.roomChange.unsubscribe();
+    // this.newMessage.unsubscribe();
   }
-
-  // loadChat(data: any) {
-  //   const headers = { "Content-Type": "application/json"}
-  //   this.messages = this.http.get<Array<Message>>(Globals.API_ENDPOINT + "/user/getMessages/" + data.id, { headers });
-  //   this.messages.subscribe(data => {
-  //     this.messages = of(data);
-  //   })
-  // }
 
   sendButtonHandler(event: Event): void {
     console.log("message to be sent: " + this.messageText);
     
     if (this.messageText) {
-      this.chatService.sendMessage(this.messageText);
+      this.userService.sendMessage(this.messageText);
+      this.messageText = "";
     }
-    
   }
-
 }

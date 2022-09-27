@@ -1,8 +1,8 @@
 <div class="flex-column bg-dark scrollarea">
     <div class="list-group list-group-flush border-bottom">
         <div class="p-2 bg-light border-bottom d-flex">
-            <input type="text" class="form-control" autocomplete="false" placeholder="Search for contacts ..." [(ngModel)]="searchedContact">
-            <button type="button" class="btn btn-outline-secondary" (click)="handleSearch($event)">
+            <input type="text" class="form-control" id="search" autocomplete="false" placeholder="Search for contacts ..." [(ngModel)]="searchedContact">
+            <button type="button" class="btn btn-outline-secondary" id="search-btn" (click)="handleSearch($event)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search"
                     viewBox="0 0 16 16">
                     <path
@@ -12,5 +12,8 @@
                 <span class="visually-hidden">Button</span>
             </button>
         </div>
+    </div>
+    <div class="card" *ngFor="let chatRoom of this.chatRooms!">
+        <div>This is a chat room</div>
     </div>
 </div>

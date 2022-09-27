@@ -17,7 +17,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
   }
-
+ 
   login() {
     this.userService.loginWithUsernameAndPassword(this.username, this.password).subscribe(
       jwt => {
@@ -34,7 +34,7 @@ export class LoginComponent implements OnInit {
             this.router.navigateByUrl('/home');
         });
       }
-     );;
+     );
     this.router.navigateByUrl('/');
   }
 

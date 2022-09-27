@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { pipe } from 'rxjs';
-import { ChatService } from 'src/app/service/chat.service';
-import { UserService } from '../../service/user.service';
+import { pipe, Subscribable, Subscription } from 'rxjs';
+import { ChatRoom, UserService } from '../../service/user.service';
 
 @Component({
   selector: 'app-contacts-view',
@@ -12,28 +11,28 @@ import { UserService } from '../../service/user.service';
 export class ContactsViewComponent implements OnInit {
 
   searchedContact?: string;
+  chatRooms?: Set<ChatRoom>; 
 
-  constructor(private userService: UserService, private chatService: ChatService, private router: Router) {}
-
-  ngOnInit(): void {
-
+  constructor(private userService: UserService, private router: Router) {
+    this.chatRooms = new Set<ChatRoom>(userService.getAllChatRooms());
   }
 
-  // data => {
-  //   console.log("end data is " + data);
-  //   this.chatService.setEndUser(data);  
-  //   if (data === undefined)
-  //     console.log('end user not found');
-  //   else {
-      
-  //   }
-  // }
+  ngOnInit(): void {
+  }
+
+  ngOnDestroy() :void {
+
+  }
 
   handleSearch(event: Event): void {
     console.log("searching for user");
     if (this.searchedContact !== this.userService.getUser()!.username) {
-        this.chatService.fetchEndUser(this.searchedContact!).subscribe({
-          next: (data) => this.chatService.setEndUser(data),
+        this.userService.fetchChatRoom(this.searchedContact!).subscribe({
+          next: (data) => {
+            data.messages = new Array<any>();
+            this.userService.setChatRoom(data);
+            this.userService.loadAllChat();
+          },
           error: (e) => console.error(e)
         });
     } else {
