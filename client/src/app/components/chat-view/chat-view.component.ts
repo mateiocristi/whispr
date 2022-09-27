@@ -1,8 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Observable, of, Subscription } from 'rxjs';
-import { ChatRoom, ChatService, EndUser, Message } from 'src/app/service/chat.service';
-import { User, UserService } from 'src/app/service/user.service';
+import { ChatRoom, EndUser, User, UserService } from 'src/app/service/user.service';
 import { Globals } from 'src/app/utils/globals';
 
 @Component({
@@ -23,16 +22,16 @@ export class ChatViewComponent implements OnInit {
   //   this.currentRoom!.messages = data;
   // });
 
-  chatRoomChange: Subscription = this.chatService.roomChange.subscribe((data) => {
+  chatRoomChange: Subscription = this.userService.roomChange.subscribe((data) => {
     console.log("chat room changed");
     this.currentRoom = data;
     this.endUser = data?.users[0].username !== this.userService.getUser()!.username ? data!.users[0] : data!.users[1];
-    this.chatService.setEndUser(this.endUser);
+    this.userService.setEndUser(this.endUser);
     this.isEndUser = true ? this.endUser !== undefined : false;
   })
 
-  constructor(private userService: UserService, private chatService: ChatService, private http: HttpClient) {
-    this.currentRoom = chatService.getChatRoom();
+  constructor(private userService: UserService, private http: HttpClient) {
+    this.currentRoom = userService.getChatRoom();
     // console.log("end user " + this.endUser?.username);
     // console.log("current room" + this.currentRoom?.id);    
   }
@@ -49,7 +48,7 @@ export class ChatViewComponent implements OnInit {
     console.log("message to be sent: " + this.messageText);
     
     if (this.messageText) {
-      this.chatService.sendMessage(this.messageText);
+      this.userService.sendMessage(this.messageText);
       this.messageText = "";
     }
   }

@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+  app-server:
+    image: "springboot-app"
+    build:
+      context: server
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    container_name: app
+    depends_on:
+      - db
+    environment:
+      - SPRING_PORT=4000
+      - DATASOURCE_HOST=db
+      - DATASOURCE_NAME=compose-postgres
+      - DATASOURCE_USERNAME=compose-postgres
+      - DATASOURCE_PASSWORD=compose-postgres
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    networks:
+      - backend
+      - frontend
+  db:
+    image: "postgres"
+    ports:
+      - "5432:5432"
+    container_name: db
+    environment:
+      - POSTGRES_USER=compose-postgres
+      - POSTGRES_PASSWORD=compose-postgres
+    volumes:
+      - db-data:/var/lib/postgresql
+    networks:
+      - backend
+  app-client:
+    build:
+      context: client
+      dockerfile: Dockerfile
+    ports:
+      - "4200:4200" # Map the exposed port 80 on the container to port 9090 on the host machine
+    depends_on:
+      - app-server
+    networks:
+      - frontend
+volumes:
+  db-data:
+networks:
+  backend:
+  frontend:

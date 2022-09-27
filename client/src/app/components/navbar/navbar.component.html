@@ -1,7 +1,7 @@
-<nav class="navbar navbar-dark bg-dark p-2">
-  <a class="navbar-brand ml-5">Whispr</a>
-  <p *ngIf="isLoggedIn" class="text-white mb-0">Welcome, {{ user?.username }}</p>
+<nav id="nav" class="navbar navbar-dark bg-dark p-2">
+  <a id="text-logo" class="navbar-brand ml-5">Whispr</a>
+  <p *ngIf="isLoggedIn" class="text-white mb-0" id="logged-user">Welcome, {{ user?.username }}</p>
   <div>
-    <button *ngIf="isLoggedIn" class="btn btn-outline-danger my-2 my-sm-0" (click)="logout()">Logout</button>
+    <button *ngIf="isLoggedIn" id="logout-btn" class="btn btn-outline-danger my-2 my-sm-0" (click)="logout()">Logout</button>
   </div>
 </nav>

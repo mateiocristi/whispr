@@ -29,12 +29,11 @@ public class UserController {
 
     private final UserService userService;
     private final ChatRoomService chatRoomService;
-
     private final MessageService messageService;
 
     @PostMapping("/create")
     public ResponseEntity<AppUser> createUser(@RequestBody AppUser user) {
-        log.debug("user: " + user);
+        log.info("user: " + user);
         return ResponseEntity.ok().body(userService.createUser(user));
     }
 
@@ -48,7 +47,7 @@ public class UserController {
 
     @GetMapping("/checkUsername/{username}")
     public ResponseEntity<?> checkUsername(@PathVariable String username) {
-        log.debug("found " + userService.checkUser(username));
+        log.info("found " + userService.checkUser(username));
         if (userService.checkUser(username).isPresent()) {
             return ResponseEntity.ok().body("found");
         }

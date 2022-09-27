@@ -1,4 +1,4 @@
-<div *ngIf="isEndUser" class="chat-panel">
+<div *ngIf="isEndUser" class="chat-panel" id="chat-frame">
   <div *ngFor="let message of this.currentRoom!.messages">
     <div *ngIf="message.user.id === endUser!.id" class="row no-gutters">
       <div class="col-md-3">
