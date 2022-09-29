@@ -7,12 +7,6 @@ import { UserService } from '../../service/user.service';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  
-  // otherUsername: string = "";
-  // currentUserChange: Subscription = this.userService.userChange.subscribe(data => {
-  //   this.chatSerive.connectToChat();
-  // }
-  // );
 
   constructor(private userService: UserService) { }
 

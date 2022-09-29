@@ -8,7 +8,7 @@ import * as Stomp from "stompjs";
 import * as SockJs from "sockjs-client";
 
 @Injectable({
-    providedIn: "root",
+    providedIn: "root"
 })
 export class UserService {
 

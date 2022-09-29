@@ -16,3 +16,6 @@ app-root {
 /* app-logon-screen {
     padding-left: 200px;
 } */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

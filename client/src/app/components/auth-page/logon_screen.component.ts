@@ -12,8 +12,6 @@ export class LogonScreenComponent implements OnInit {
   constructor(private userService: UserService, private router: Router) {}
 
   ngOnInit(): void {
-    console.log("fuck you");
-    
   }
 
   handleClick(event: Event) {
