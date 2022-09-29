@@ -43,14 +43,14 @@ export class UserService {
                 this.fetchAllChatRooms().subscribe(data => {
                     this.chatRooms! = new Set<ChatRoom>(data);
                 })
-                this.router.navigateByUrl("/home");
+                this.router.navigate(["/home"]);
             }
             else
-                this.router.navigateByUrl("/");    
+                this.router.navigate(["/"]);    
         });
 
         this.roomChange.subscribe((chatRoom: ChatRoom | undefined) => {
-            console.log("setting chat room");
+            console.log("loading new chat room");
             
             chatRoom!.messages = new Array<Message>(); 
             this.currentRoom = chatRoom;
@@ -64,10 +64,8 @@ export class UserService {
     }
 
     register(username: string, password: string): Observable<any> {
-
         console.log("registering with username " + username, + " paswword " +  password);
         
-
         const headers = { "Content-Type": "application/json"}
         const raw = JSON.stringify({
             "username": username,
@@ -147,7 +145,6 @@ export class UserService {
             )
         }, err => {
             console.log("error " + err);
-            
         });
     }
 

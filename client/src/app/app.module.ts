@@ -22,6 +22,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips'
+import { RouteGuardService } from './service/routeGuard.service';
 
 
 
@@ -48,7 +49,7 @@ import { MatChipsModule } from '@angular/material/chips'
         BrowserAnimationsModule,
         
     ],
-  providers: [],
+  providers: [RouteGuardService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
