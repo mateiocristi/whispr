@@ -7,10 +7,9 @@ import { HomeComponent } from './components/home/home.component';
 import { RouteGuardService } from './service/routeGuard.service';
 
 const routes: Routes = [
-  { path: '', component: LogonScreenComponent, children :[
-    { path: 'register', component: RegisterComponent },
-    { path: 'login', component: LoginComponent }
-  ]},
+  { path: '', component: LogonScreenComponent },
+  { path: 'register', component: RegisterComponent },
+  { path: 'login', component: LoginComponent },
   { path: 'home', component: HomeComponent, canActivate: [RouteGuardService]}
 ];
 

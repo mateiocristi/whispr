@@ -1,5 +1,6 @@
 package com.whispr.server.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -19,6 +20,7 @@ public class ChatRoom {
     private String id;
     @ManyToMany
     private List<AppUser> users = new ArrayList<>();
-//    @OneToMany
-//    private Set<Message> messages = new HashSet<>();
+    @OneToMany(mappedBy = "room")
+    @JsonManagedReference
+    private List<Message> messages = new ArrayList<>();
 }

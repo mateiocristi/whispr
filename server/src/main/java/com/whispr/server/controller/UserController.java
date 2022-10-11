@@ -89,6 +89,8 @@ public class UserController {
         AppUser fromUser = userService.getUserByUsername(from_username).get();
         AppUser toUser = userService.getUserByUsername(to_username).get();
         ChatRoom ch = chatRoomService.getRoomByUsers(fromUser, toUser);
+        System.out.println("messages: ");
+        ch.getMessages().forEach(System.out::println);
         return ResponseEntity.status(OK).body(ch);
     }
 
