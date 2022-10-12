@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Set;
 
 @Builder
-@Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,7 +19,7 @@ public class ChatRoom {
     private String id;
     @ManyToMany
     private List<AppUser> users = new ArrayList<>();
-    @OneToMany(mappedBy = "room")
+    @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<Message> messages = new ArrayList<>();
 }
