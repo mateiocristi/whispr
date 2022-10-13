@@ -189,15 +189,9 @@ export class UserService {
 
     findChatRoomWithUserField(value: string | bigint): ChatRoom | undefined {
         type key = keyof SimpleUser;
-        const myKey = typeof value === "string" ? "username" as key : "id" as key;
-        
-        let chatRoom: ChatRoom | undefined = undefined;
-        this.chatRooms!.forEach(room => {
-            if (room.users.map(user => user[myKey]).includes(value)) {
-                chatRoom = room;
-            }
-        });
-        return chatRoom;
+        const fieldKey = typeof value === "string" ? "username" as key : "id" as key;
+
+        return this.chatRooms!.find(x => x.users.some(u => u[fieldKey] === value));
     }
 
     getCurrentChatRoom(): ChatRoom {

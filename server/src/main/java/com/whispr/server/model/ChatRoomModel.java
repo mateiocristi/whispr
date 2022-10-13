@@ -17,7 +17,7 @@ public class ChatRoomModel {
     public ChatRoomModel(ChatRoom chatRoom) {
         this.id = chatRoom.getId();
         chatRoom.getUsers().forEach(user -> this.users.add(new UserModel(user)));
-        if (chatRoom.getMessages().size() != 0)
+        if (chatRoom.getMessages() != null)
             chatRoom.getMessages().forEach(message -> this.messages.add(new MessageModel(message)));
     }
 }
