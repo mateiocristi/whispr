@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Observable, of, Subscription } from 'rxjs';
-import { ChatRoom, EndUser, User, UserService } from 'src/app/service/user.service';
+import { ChatRoom, SimpleUser, User, UserService } from 'src/app/service/user.service';
 import { Globals } from 'src/app/utils/globals';
 
 @Component({
@@ -11,37 +11,25 @@ import { Globals } from 'src/app/utils/globals';
 })
 export class ChatViewComponent implements OnInit {
 
-  endUser?: EndUser;
-  isEndUser: boolean = false;
+  endUser?: SimpleUser;
   currentRoom?: ChatRoom;
   messageText?: string; 
 
-  // newMessage: Subscription = this.chatService.newMessage.subscribe((data) => {
-  //   console.log("new message received");
-
-  //   this.currentRoom!.messages = data;
-  // });
-
-  chatRoomChange: Subscription = this.userService.roomChange.subscribe((data) => {
-    console.log("chat room changed");
-    this.currentRoom = data;
-    this.endUser = data?.users[0].username !== this.userService.getUser()!.username ? data!.users[0] : data!.users[1];
-    this.userService.setEndUser(this.endUser);
-    this.isEndUser = true ? this.endUser !== undefined : false;
-  })
-
   constructor(private userService: UserService, private http: HttpClient) {
-    this.currentRoom = userService.getChatRoom();
-    // console.log("end user " + this.endUser?.username);
-    // console.log("current room" + this.currentRoom?.id);    
   }
 
   ngOnInit(): void {
+    this.userService.onRoomChange.subscribe((data) => {
+      console.log("chat room changed");
+      this.currentRoom = data;
+      this.endUser = data?.users[0].username !== this.userService.getUser()!.username ? data!.users[0] : data!.users[1];
+      this.userService.setEndUser(this.endUser);
+    });
+    this.currentRoom = this.userService.getCurrentChatRoom();
   }
 
   ngOnDestroy(): void {
-    // this.chatService.roomChange.unsubscribe();
-    // this.newMessage.unsubscribe();
+    this.userService.onRoomChange.unsubscribe();
   }
 
   sendButtonHandler(event: Event): void {

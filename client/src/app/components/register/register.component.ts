@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from 'src/app/service/user.service';
 
@@ -10,25 +11,39 @@ import { UserService } from 'src/app/service/user.service';
 })
 export class RegisterComponent implements OnInit {
 
-  isUsernameTaken: boolean = false;
-  username: string = "";
-  password: string = "";
-  rPassword: string = "";
+  registerForm!: FormGroup;
 
-  constructor(private router: Router, private http: HttpClient, private userService: UserService) { }
+  isUsernameTaken: boolean = false;
+
+  constructor(private router: Router, private http: HttpClient, private userService: UserService, private fb: FormBuilder) { }
 
   ngOnInit(): void {
-
+    this.registerForm =  this.fb.group({
+      username: new FormControl("", [Validators.required]),
+      password: new FormControl("", [Validators.required]),
+      rPassword: new FormControl("", [Validators.required]),
+    })
   }
 
   register() {
-    console.log(this.username);
-
-    this.userService.checkUsername(this.username).subscribe()
-    this.userService.register(this.username, this.password).subscribe(data => {
+    console.log("checking username " + this.registerForm.get('username')?.value);
+    this.userService.checkUsername(this.getUsername()?.value).subscribe()
+    this.userService.register(this.getUsername()!.value, this.getPassword()!.value).subscribe(data => {
       console.log(data);
-  });;
+  });
     this.router.navigateByUrl('/');
+  }
+
+  getUsername() {
+    return this.registerForm.get('username');
+  }
+
+  getPassword() {
+    return this.registerForm.get('password');
+  }
+
+  getrPassword() {
+    return this.registerForm.get('rPassword');
   }
 
 }

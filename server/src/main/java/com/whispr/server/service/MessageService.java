@@ -1,9 +1,8 @@
 package com.whispr.server.service;
 
-import com.whispr.server.model.Message;
+import com.whispr.server.entity.Message;
 
 import java.util.List;
-import java.util.Set;
 
 public interface MessageService {
     List<Message> findAllByRoomId(String id);

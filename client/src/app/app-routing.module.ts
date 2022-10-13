@@ -4,12 +4,13 @@ import { RegisterComponent } from './components/register/register.component';
 import { LoginComponent } from './components/login/login.component';
 import { LogonScreenComponent } from './components/auth-page/logon_screen.component';
 import { HomeComponent } from './components/home/home.component';
+import { RouteGuardService } from './service/routeGuard.service';
 
 const routes: Routes = [
-  { path: '', component: LogonScreenComponent},
+  { path: '', component: LogonScreenComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'home', component: HomeComponent}
+  { path: 'home', component: HomeComponent, canActivate: [RouteGuardService]}
 ];
 
 @NgModule({

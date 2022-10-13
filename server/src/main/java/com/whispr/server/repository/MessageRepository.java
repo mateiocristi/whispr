@@ -1,7 +1,6 @@
 package com.whispr.server.repository;
 
-import com.whispr.server.model.Message;
-import org.springframework.data.domain.Sort;
+import com.whispr.server.entity.Message;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

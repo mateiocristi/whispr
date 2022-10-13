@@ -1,4 +1,4 @@
-package com.whispr.server.model;
+package com.whispr.server.entity;
 
 import lombok.*;
 
@@ -16,7 +16,8 @@ import java.util.Set;
 @ToString
 public class AppUser {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)    private long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
     private String username;
     private String password;
     @ElementCollection(fetch = FetchType.EAGER)

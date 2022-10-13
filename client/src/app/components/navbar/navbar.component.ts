@@ -12,7 +12,7 @@ export class NavbarComponent implements OnInit {
   user: User | undefined;
   isLoggedIn: boolean = false;
   
-  userChange: Subscription = this.userService.userChange.subscribe(data => {
+  userChange: Subscription = this.userService.onUserChange.subscribe(data => {
     this.user = this.userService.getUser();
     this.isLoggedIn = true ? this.userService.getUser() !== undefined : false;
     console.log("logged user change to " + this.user);

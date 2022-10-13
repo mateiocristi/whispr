@@ -1,6 +1,7 @@
-package com.whispr.server.model;
+package com.whispr.server.entity;
 
-import com.whispr.server.utils.MessageType;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.persistence.*;
@@ -21,6 +22,7 @@ public class Message {
     private boolean isRead;
 //    private MessageType type;
     @ManyToOne
+    @JsonBackReference
     private ChatRoom room;
     @ManyToOne
     private AppUser user;
