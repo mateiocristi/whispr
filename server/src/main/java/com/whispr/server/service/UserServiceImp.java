@@ -1,10 +1,9 @@
 package com.whispr.server.service;
 
-import com.whispr.server.model.AppUser;
+import com.whispr.server.entity.AppUser;
 import com.whispr.server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;

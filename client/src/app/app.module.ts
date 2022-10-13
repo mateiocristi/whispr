@@ -17,12 +17,8 @@ import { UserProfileComponent } from './components/user-profile/user-profile.com
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatChipsModule } from '@angular/material/chips'
 import { RouteGuardService } from './service/routeGuard.service';
+import { DisplayEndUsernamePipe } from './customPipes/DisplayEndUsername.pipe';
 
 
 
@@ -37,7 +33,8 @@ import { RouteGuardService } from './service/routeGuard.service';
     NavbarComponent,
     ContactsViewComponent,
     ChatViewComponent,
-    UserProfileComponent
+    UserProfileComponent,
+    DisplayEndUsernamePipe
   ],
     imports: [
       HttpClientModule,

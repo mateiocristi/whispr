@@ -1,23 +1,21 @@
 package com.whispr.server.controller;
 
-import com.whispr.server.model.AppUser;
-import com.whispr.server.model.ChatRoom;
-import com.whispr.server.model.EndUser;
-import com.whispr.server.model.Message;
+import com.whispr.server.entity.AppUser;
+import com.whispr.server.entity.ChatRoom;
+import com.whispr.server.model.ChatRoomModel;
+import com.whispr.server.model.MessageModel;
+import com.whispr.server.model.UserModel;
 import com.whispr.server.service.ChatRoomService;
 import com.whispr.server.service.MessageService;
 import com.whispr.server.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -55,8 +53,8 @@ public class UserController {
     }
 
     @GetMapping("/getEndUser/{username}")
-    public ResponseEntity<EndUser> getEndUser(@PathVariable String username) {
-        EndUser endUser = EndUser.builder().build();
+    public ResponseEntity<UserModel> getEndUser(@PathVariable String username) {
+        UserModel endUser = UserModel.builder().build();
         if (userService.checkUser(username).isPresent()) {
             endUser.setUsername(username);
             endUser.setId(userService.getUserByUsername(username).get().getId());
@@ -66,8 +64,11 @@ public class UserController {
     }
 
     @GetMapping("/getMessages/{room_id}")
-    public ResponseEntity<List<Message>> getMessagesByChatRoomId(@PathVariable String room_id) {
-        return ResponseEntity.status(OK).body(messageService.findAllByRoomId(room_id));
+    public ResponseEntity<List<MessageModel>> getMessagesByChatRoomId(@PathVariable String room_id) {
+        List<MessageModel> messages = new ArrayList<>();
+        messageService.findAllByRoomId(room_id).forEach(message -> messages.add(new MessageModel(message)));
+
+        return ResponseEntity.status(OK).body(messages);
 
     }
 
@@ -80,18 +81,26 @@ public class UserController {
 //    }
 
     @GetMapping("/getAllChatRooms/{userId}")
-    public ResponseEntity<List<ChatRoom>> getAllChatRooms(@PathVariable long userId) {
-        return ResponseEntity.status(OK).body(chatRoomService.getAllRooms(userId));
+    public ResponseEntity<List<ChatRoomModel>> getAllChatRooms(@PathVariable long userId) {
+        List<ChatRoomModel> rooms = new ArrayList<>();
+        chatRoomService.getAllRoomsByUserId(userId).forEach(room -> rooms.add(new ChatRoomModel(room)));
+        return ResponseEntity.status(OK).body(rooms);
     }
 
-    @GetMapping("/getChatRoom/{from_username}/{to_username}")
-    public ResponseEntity<ChatRoom> getChatRoomForUsernames(@PathVariable String from_username, @PathVariable String to_username) {
+    @GetMapping("/getChatRoomWithUsernames/{from_username}/{to_username}")
+    public ResponseEntity<ChatRoomModel> getChatRoomForUsernames(@PathVariable String from_username, @PathVariable String to_username) {
         AppUser fromUser = userService.getUserByUsername(from_username).get();
         AppUser toUser = userService.getUserByUsername(to_username).get();
         ChatRoom ch = chatRoomService.getRoomByUsers(fromUser, toUser);
-        System.out.println("messages: ");
-        ch.getMessages().forEach(System.out::println);
-        return ResponseEntity.status(OK).body(ch);
+        return ResponseEntity.status(OK).body(new ChatRoomModel(ch));
+    }
+
+    @GetMapping("/getChatRoomWithIds/{from_userId}/{to_userId}")
+    public ResponseEntity<ChatRoomModel> getChatRoomForIds(@PathVariable long from_userId, @PathVariable long to_userId) {
+        AppUser fromUser = userService.getUserById(from_userId).get();
+        AppUser toUser = userService.getUserById(to_userId).get();
+        ChatRoom ch = chatRoomService.getRoomByUsers(fromUser, toUser);
+        return ResponseEntity.status(OK).body(new ChatRoomModel(ch));
     }
 
 }

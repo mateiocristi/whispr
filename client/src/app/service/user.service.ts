@@ -5,7 +5,7 @@ import { CookieService } from "ngx-cookie-service";
 import { ignoreElements, Observable, Subject } from "rxjs";
 import { Globals } from "../utils/globals"
 import * as Stomp from "stompjs";
-import * as SockJs from "sockjs-client";
+import * as SockJS from "sockjs-client";
 
 @Injectable({
     providedIn: "root"
@@ -13,60 +13,68 @@ import * as SockJs from "sockjs-client";
 export class UserService {
 
     private user?: User;
-    private chatRooms?: Set<ChatRoom>;
+    private chatRooms?: Array<ChatRoom> = new Array<ChatRoom>;
     private currentRoom?: ChatRoom;
-    private endUser?: EndUser;
+    private endUser?: SimpleUser;
 
     private socket?: WebSocket;
-    private stompClient?: Stomp.Client;  
+    private stompClient?: Stomp.Client;
 
-    newMessage: Subject<Array<Message>> = new Subject<Array<Message>>();
-    roomChange: Subject<ChatRoom | undefined> = new Subject<ChatRoom | undefined>();
-    userChange: Subject<User | undefined> = new Subject<User | undefined>();
+    onNewMessage = new Subject<Message>();
+    onRoomChange = new Subject<ChatRoom>();
+    onUserChange = new Subject<User | undefined>();
 
     constructor(private cookieService: CookieService, private http: HttpClient, private router: Router) {
 
-        this.chatRooms = new Set<ChatRoom>();
-        
         this.loginWithJWT().subscribe(data => {
             this.user = data;
-            this.userChange.next(data);
-            this.saveCookie("currentUser", data);
+            this.onUserChange.next(data);
         });
 
-        this.userChange.subscribe((user: User | undefined) => {
+        this.onUserChange.subscribe((user: User | undefined) => {
             console.log("user has changed");
-            
+
             this.user = user;
             if (user !== undefined) {
+                this.saveCookie("currentUser", user);
                 this.connectToChat();
-                this.fetchAllChatRooms().subscribe(data => {
-                    this.chatRooms! = new Set<ChatRoom>(data);
+                this.fetchAllChatRoomsAndMessages().subscribe(data => {
+                    if (data.length > 0) {
+                        this.chatRooms! = [...data];
+                        this.onRoomChange.next(this.chatRooms!.at(0)!);
+                    }
                 })
                 this.router.navigate(["/home"]);
             }
             else
-                this.router.navigate(["/"]);    
+                this.router.navigate(["/"]);
         });
 
-        this.roomChange.subscribe((chatRoom: ChatRoom | undefined) => {
+        this.onRoomChange.subscribe((chatRoom: ChatRoom) => {
             console.log("loading new chat room");
-            
-            chatRoom!.messages = new Array<Message>(); 
+
             this.currentRoom = chatRoom;
-            this.chatRooms!.add(chatRoom!);
-            this.endUser = chatRoom!.users[0] !== this.user ? chatRoom!.users[0] : chatRoom!.users[1]; 
+            this.endUser = chatRoom!.users[0] !== this.user ? chatRoom!.users[0] : chatRoom!.users[1];
         });
 
-        this.newMessage.subscribe((messages: Array<Message>) => {
-            this.currentRoom!.messages = messages;
-        }); 
+        this.onNewMessage.subscribe((message: Message) => {
+            let chatRoom: ChatRoom | undefined = this.findChatRoomWithUserField(message.userId);
+            if (chatRoom!) {
+                
+                console.log("conversation exists... appending message");
+                chatRoom.messages.push(message);
+            } else {
+
+                console.log("conversation is new... fetching");
+                this.fetchChatRoomWithIds(message.id);
+            }
+        });
     }
 
     register(username: string, password: string): Observable<any> {
-        console.log("registering with username " + username, + " paswword " +  password);
-        
-        const headers = { "Content-Type": "application/json"}
+        console.log("registering with username " + username, + " paswword " + password);
+
+        const headers = { "Content-Type": "application/json" }
         const raw = JSON.stringify({
             "username": username,
             "password": password,
@@ -84,7 +92,7 @@ export class UserService {
     }
 
     loginWithUsernameAndPassword(username: string, password: string): Observable<Jwt> {
-        const headers = {"Content-Type": "application/x-www-form-urlencoded"};
+        const headers = { "Content-Type": "application/x-www-form-urlencoded" };
         const urlencoded = new URLSearchParams();
         urlencoded.append("username", username);
         urlencoded.append("password", password);
@@ -96,14 +104,14 @@ export class UserService {
             redirect: "follow"
         };
 
-       return this.http.post<Jwt>(Globals.API_ENDPOINT + "/login", urlencoded, { headers });
+        return this.http.post<Jwt>(Globals.API_ENDPOINT + "/login", urlencoded, { headers });
     }
 
     loginWithJWT(): Observable<User> {
         const access_token = this.getCookie(("jwt")).access_token;
         console.log("access token from cookies: " + access_token);
-        
-        const headers = { "Content-Type": "application/json", "Authorization": "Bearer " + access_token};
+
+        const headers = { "Content-Type": "application/json", "Authorization": "Bearer " + access_token };
         const requestOptions = {
             method: "POST",
             headers: headers,
@@ -113,7 +121,10 @@ export class UserService {
     }
 
     logout(): void {
-        this.userChange.next(undefined);
+        this.stompClient?.disconnect(() => {
+            console.log("disconnected from chat");
+        });
+        this.onUserChange.next(undefined);
         this.deleteCookies();
         this.router.navigateByUrl("/");
     }
@@ -124,23 +135,22 @@ export class UserService {
             headers: headers,
             responseType: "text"
         }
-        const req = this.http.get<string>(Globals.API_ENDPOINT + "/user/checkUsername/" + username, reqOptions);
-        return req;
+        return this.http.get<string>(Globals.API_ENDPOINT + "/user/checkUsername/" + username, reqOptions);
     }
 
     connectToChat(): void {
         console.log("connecting to chat...");
-        this.socket = new SockJs(Globals.API_ENDPOINT + "/chat");
+        this.socket = new SockJS(Globals.API_ENDPOINT + "/chat");
         this.stompClient = Stomp.over(this.socket);
         this.stompClient.connect({}, (frame) => {
             console.log(frame);
             this.stompClient!.subscribe(
-                "/topic/messages/" + this.user!.id, 
+                "/topic/messages/" + this.user!.id,
                 (response) => {
                     // handle the message
                     let message: Message = JSON.parse(response.body)
                     console.log("new message ", message);
-                    this.loadAllChat();
+                    this.onNewMessage.next(message);
                 }
             )
         }, err => {
@@ -150,51 +160,59 @@ export class UserService {
 
     sendMessage(message?: string) {
         console.log("message to be sent is " + message);
-    
+
         if (message !== undefined) {
             console.log("message is sending...");
-            
+
             this.stompClient!.send("/app/chat/" + this.user!.id + "/" + this.endUser!.id, {}, message);
-            this.loadAllChat();
         }
     }
 
-    fetchAllChatRooms(): Observable<Array<ChatRoom>> {
-        const headers = {"Content-Type": "application/json" }
+    fetchAllChatRoomsAndMessages(): Observable<Array<ChatRoom>> {
+        const headers = { "Content-Type": "application/json" }
         return this.http.get<Array<ChatRoom>>(Globals.API_ENDPOINT + "/user/getAllChatRooms/" + this.user!.id);
     }
 
-    fetchChatRoom(endUsername: String): Observable<ChatRoom> {
-        const headers = {"Content-Type": "application/json"};
-        return this.http.get<ChatRoom>(Globals.API_ENDPOINT +  "/user/getChatRoom/" + this.user!.username + "/" + endUsername, { headers });
+    fetchChatRoomWithUsernames(endUsername: String): Observable<ChatRoom> {
+        const headers = { "Content-Type": "application/json" };
+        return this.http.get<ChatRoom>(Globals.API_ENDPOINT + "/user/getChatRoomWithUsernames/" + this.user!.username + "/" + endUsername, { headers });
     }
 
-    setChatRoom(chatRoom: ChatRoom) {
-        this.roomChange!.next(chatRoom);
+    fetchChatRoomWithIds(endUserId: bigint): Observable<ChatRoom> {
+        const headers = { "Content-Type": "application/json" };
+        return this.http.get<ChatRoom>(Globals.API_ENDPOINT + "/user/getChatRoomWithIds/" + this.user!.id + "/" + endUserId, { headers });
     }
 
-    getChatRoom(): ChatRoom {
+    addChatRoom(chatRoom: ChatRoom) {
+        this.chatRooms!.push(chatRoom);
+    }
+
+    findChatRoomWithUserField(value: string | bigint): ChatRoom | undefined {
+        type key = keyof SimpleUser;
+        const myKey = typeof value === "string" ? "username" as key : "id" as key;
+        
+        let chatRoom: ChatRoom | undefined = undefined;
+        this.chatRooms!.forEach(room => {
+            if (room.users.map(user => user[myKey]).includes(value)) {
+                chatRoom = room;
+            }
+        });
+        return chatRoom;
+    }
+
+    getCurrentChatRoom(): ChatRoom {
         return this.currentRoom!;
     }
 
-    getAllChatRooms(): Set<ChatRoom> {
+    getChatRooms(): Array<ChatRoom> {
         return this.chatRooms!;
     }
 
-    loadAllChat(): void {
-        const headers = {"Content-Type": "application/json"}
-        const req = this.http.get<Array<Message>>(Globals.API_ENDPOINT + "/user/getMessages/" + this.currentRoom!.id, { headers });
-        req.subscribe(data => {
-            this.newMessage.next(data);
-        });
-    }
-
-
-    setEndUser(user: EndUser) {
+    setEndUser(user: SimpleUser) {
         this.endUser = user;
     }
 
-    getEndUser(): EndUser{
+    getEndUser(): SimpleUser {
         return this.endUser!;
     }
 
@@ -222,28 +240,28 @@ export interface User {
     roles: [],
 }
 
-export interface EndUser {
+export interface SimpleUser {
     id: bigint;
     username: string;
 }
 
 export interface ChatRoom {
-    id: bigint;
-    users: Array<EndUser>;
-    messages: Array<any>;
+    id: string;
+    users: Array<SimpleUser>;
+    messages: Array<Message>;
 }
 
 export interface Message {
     id: bigint;
+    userId: bigint;
     messageText: string;
     timestamp: bigint;
     is_Read: boolean;
     type: string;
-    room: ChatRoom;
-    user: User;
+    chatRoomId: string;
 }
 
 interface Jwt {
-    access_token: string,
-    refresh_token: string
+    access_token: string;
+    refresh_token: string;
 }

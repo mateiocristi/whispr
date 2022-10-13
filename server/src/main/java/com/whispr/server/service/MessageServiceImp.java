@@ -1,6 +1,6 @@
 package com.whispr.server.service;
 
-import com.whispr.server.model.Message;
+import com.whispr.server.entity.Message;
 import com.whispr.server.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor

@@ -1,27 +1,21 @@
 package com.whispr.server.model;
 
+import com.whispr.server.entity.Message;
 import lombok.*;
 
-import javax.persistence.*;
-
-@Builder
 @Getter
 @Setter
-@ToString
-@RequiredArgsConstructor
-@AllArgsConstructor
-public class SimpleMessage {
-    @Id
+public class MessageModel {
     private long id;
     private String messageText;
     private long timestamp;
     private boolean isRead;
     //    private MessageType type;
     private String chatRoomId;
-
     private long userId;
+    private String text;
 
-    public SimpleMessage(Message message) {
+    public MessageModel(Message message) {
         this.id = message.getId();
         this.userId = message.getUser().getId();
         this.chatRoomId = message.getRoom().getId();

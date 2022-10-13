@@ -1,15 +1,15 @@
-package com.whispr.server.model;
+package com.whispr.server.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Builder
+@Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,7 +19,7 @@ public class ChatRoom {
     private String id;
     @ManyToMany
     private List<AppUser> users = new ArrayList<>();
-    @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "room", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Message> messages = new ArrayList<>();
 }

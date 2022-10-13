@@ -1,26 +1,21 @@
 package com.whispr.server.controller;
 
-import com.whispr.server.model.AppUser;
-import com.whispr.server.model.ChatRoom;
-import com.whispr.server.model.Message;
-import com.whispr.server.model.SimpleMessage;
+import com.whispr.server.entity.AppUser;
+import com.whispr.server.entity.ChatRoom;
+import com.whispr.server.entity.Message;
+import com.whispr.server.model.MessageModel;
 import com.whispr.server.service.ChatRoomService;
 import com.whispr.server.service.MessageService;
 import com.whispr.server.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -54,7 +49,8 @@ public class MessagingController {
         log.info("message user id: " + message.getUser().getId());
 
         // to do: add the destination id to uri
-        simpMessagingTemplate.convertAndSend("/topic/messages/" + toUser.getId() , new SimpleMessage(message));
+        simpMessagingTemplate.convertAndSend("/topic/messages/" + toUser.getId() , new MessageModel(message));
+        simpMessagingTemplate.convertAndSend("/topic/messages/" + fromUser.getId() , new MessageModel(message));
     }
 
 }

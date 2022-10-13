@@ -1,8 +1,7 @@
 package com.whispr.server.service;
 
-import com.whispr.server.model.AppUser;
+import com.whispr.server.entity.AppUser;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 

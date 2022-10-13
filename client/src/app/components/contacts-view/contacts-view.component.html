@@ -13,7 +13,9 @@
             </button>
         </div>
     </div>
-    <div class="card" *ngFor="let chatRoom of this.chatRooms!">
-        <div>This is a chat room</div>
+    <div *ngIf="currentUser !== undefined">
+        <div class="card" *ngFor="let chatRoom of chatRooms!">
+            <div (click)="handleChatRoomClick($event)">{{ chatRoom.users | DisplayEndUsername : currentUser!.id }}</div>
+        </div>
     </div>
 </div>

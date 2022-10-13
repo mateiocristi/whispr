@@ -1,4 +1,4 @@
-package com.whispr.server.model;
+package com.whispr.server.entity;
 
 import lombok.*;
 

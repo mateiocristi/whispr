@@ -1,15 +1,14 @@
 package com.whispr.server.service;
 
-import com.whispr.server.model.AppUser;
-import com.whispr.server.model.ChatRoom;
+import com.whispr.server.entity.AppUser;
+import com.whispr.server.entity.ChatRoom;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 public interface ChatRoomService {
 
-    List<ChatRoom> getAllRooms(long id);
+    List<ChatRoom> getAllRoomsByUserId(long id);
 
     Optional<ChatRoom> getChatRoomById(String id);
 
