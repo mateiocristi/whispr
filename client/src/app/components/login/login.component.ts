@@ -24,25 +24,12 @@ export class LoginComponent implements OnInit {
   }
  
   login() {
-    console.log("login user " + this.getUsername()?.value + " password " + this.getPassword()?.value);
-    
-    this.userService.loginWithUsernameAndPassword(this.getUsername()!.value, this.getPassword()!.value).subscribe(
-      jwt => {
-          console.log('jwt ' + jwt.access_token + 'refresh ' +jwt.refresh_token);
-          
-          this.userService.saveCookie('jwt', jwt);
-          console.log('jwt ' + (this.userService.getCookie('jwt') || '{}').access_token);
-          ;
-          this.userService.loginWithJWT().subscribe(data => {
-            console.log('username: ' + data.username + ' id: ' + data.id);
-            this.userService.onUserChange.next(data);
-            this.userService.getUser();
-            this.userService.saveCookie('currentUser', data)
-            this.router.navigateByUrl('/home');
-        });
+    this.userService.retrieveJWT(this.getUsername()!.value, this.getPassword()!.value).subscribe((jwt) => {
+        this.userService.saveCookie("jwt", jwt);
+        this.userService.login();
       }
-     );
-    this.router.navigate(['']);
+    )    
+    this.userService.login();
   }
 
   getUsername(){

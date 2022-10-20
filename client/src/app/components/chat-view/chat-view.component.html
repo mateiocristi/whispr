@@ -1,17 +1,58 @@
-<div *ngIf="endUser !== undefined" class="chat-panel" id="chat-frame">
-  <div class="card">{{endUser.username}}</div>
-  <div *ngFor="let message of currentRoom!.messages">
-    <div *ngIf="message.userId === endUser!.id" class="row no-gutters">
-      <div class="col-md-3">
-        <div class="chat-bubble chat-bubble--left">
+<div id="container">
+  <div id="header">
+    <div class="avatarSection">
+      <div class="picture">
+        <img src="../../assets/images/noPic.svg" />
+      </div>
+
+      <div class="nameSection">{{ (currentChatRoom.users | GetEndUser: currentUser.id).username}}</div>
+    </div>
+    <div class="actionButtons">
+      <img src="../../assets/images/attached.svg" />
+      <img src="../../assets/images/moreVertIcon.svg" />
+    </div>
+  </div>
+  <div id="body" #scrollContainer>
+    <div class="message" [ngClass]="{ me: message.userId !== (currentChatRoom.users | GetEndUser : currentUser.id).id }" *ngFor="let message of currentChatRoom!.messages">
+        <div class="messageContent">
           {{ message.messageText }}
+          <div class="time">{{ message.timestamp | date }}</div>
+        </div>
+    </div>
+  </div>
+  <div id="footer">
+    <div id="smileyIcon">
+      <img src="../../assets/images/smileIcon.svg"/>
+    </div>
+    <div id="textarea">
+      <textarea
+        [(ngModel)]="messageText"
+        (keyup.enter)="sendButtonHandler($event)"
+      ></textarea>
+    </div>
+    <div id="micIcon">
+      <img src="../../assets/images/voiceIcon.svg" />
+    </div>
+  </div>
+</div>
+
+
+<!-- <div *ngIf="endUser !== undefined" class="h-100" id="chat-frame">
+  <div class="text-center p-2 bg-secondary text-white"><h3>{{endUser.username}}</h3></div>
+  <div class="chat-panel bg-white">
+    <div *ngFor="let message of currentRoom!.messages">
+      <div *ngIf="message.userId === endUser!.id" class="row no-gutters">
+        <div class="col-md-3">
+          <div class="chat-bubble chat-bubble--left">
+            {{ message.messageText }}
+          </div>
         </div>
       </div>
-    </div>
-    <div *ngIf="message.userId !== endUser!.id" class="row no-gutters">
-      <div class="col-md-3 offset-md-9">
-        <div class="chat-bubble chat-bubble--right">
-          {{ message.messageText }}
+      <div *ngIf="message.userId !== endUser!.id" class="row no-gutters">
+        <div class="col-md-3 offset-md-9">
+          <div class="chat-bubble chat-bubble--right">
+            {{ message.messageText }}
+          </div>
         </div>
       </div>
     </div>
@@ -27,4 +68,4 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->

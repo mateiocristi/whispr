@@ -1,4 +1,4 @@
-<div class="flex-column bg-dark scrollarea">
+<!-- <div class="flex-column bg-dark scrollarea">
     <div class="list-group list-group-flush border-bottom">
         <div class="p-2 bg-light border-bottom d-flex">
             <input type="text" class="form-control" id="search" autocomplete="false" placeholder="Search for contacts ..." [(ngModel)]="searchedContact">
@@ -14,8 +14,57 @@
         </div>
     </div>
     <div *ngIf="currentUser !== undefined">
-        <div class="card" *ngFor="let chatRoom of chatRooms!">
-            <div (click)="handleChatRoomClick($event)">{{ chatRoom.users | DisplayEndUsername : currentUser!.id }}</div>
+        <div class="conversation-container text-center" *ngFor="let chatRoom of chatRooms!">
+            <div class="card" (click)="handleChatRoomClick($event)">{{ chatRoom.users | DisplayEndUsername : currentUser!.id }}</div>
         </div>
     </div>
+</div> -->
+
+<div id="sidebar">
+  <div id="row1">
+    <div id="sidebarHeader">
+      <div class="avatarContainer">
+        <img src="../../assets/images/noPic.svg" />
+      </div>
+      <div>
+        <p>{{ currentUser!.username }}</p>
+      </div>
+      <div class="actionsContainer">
+        <!-- <img src="../../assets/images/statusIcon.svg" /> -->
+        <img width= 30 src="../../assets/images/chatIcon.svg" />
+        <!-- <img src="../../assets/images/moreVertIcon.svg" /> -->
+        <img width= 30  src="../../assets/images/logoff.svg" (click)="logout($event)"/>
+      </div>
+    </div>
+    <div id="searchBox">
+      <img width="19" src="../../assets/images/searchIcon.svg"  (click)="onSearchTextEntered()"/>
+      <input type="text" placeholder="Search or start the new chat" [(ngModel)]="searchedContact" />
+    </div>
+  </div>
+  <div id="sidebarContent">
+    <!-- <div id="noConversations">Start chatting</div> -->
+    <div class="conversation" *ngFor="let conversation of chatRooms" (click)="onConversationClick(conversation)">
+      <div class="picture">
+        <img src="../../assets/images/noPic.svg" />
+      </div>
+      <div class="content">
+        <div class="conversationHeader">
+          <div class="name">{{ (conversation.users | GetEndUser : currentUser!.id).username }}</div>
+          <div class="time">{{ "11:20" }}</div>
+        </div>
+        <div class="message" *ngIf="conversation.messages.length > 0">
+          <img
+            *ngIf="!conversation.lastMessage.isRead"
+            src="../../assets/images/doubleTick.svg"
+          />
+          <img
+            *ngIf="conversation.lastMessage.isRead"
+            src="../../assets/images/doubleTickBlue.svg"
+          />
+          {{ conversation.lastMessage.messageText }}
+          <!-- {{ (conversation.messages | LastMessage).messageText }} -->
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

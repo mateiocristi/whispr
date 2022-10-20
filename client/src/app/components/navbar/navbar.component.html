@@ -2,6 +2,6 @@
   <a id="text-logo" class="navbar-brand ml-5">Whispr</a>
   <p *ngIf="isLoggedIn" class="text-white mb-0" id="logged-user">Welcome, {{ user?.username }}</p>
   <div>
-    <button *ngIf="isLoggedIn" id="logout-btn" class="btn btn-outline-danger my-2 my-sm-0" (click)="logout()">Logout</button>
+    <button id="logout-btn" class="btn btn-outline-danger my-2 my-sm-0" (click)="logout()">Logout</button>
   </div>
 </nav>

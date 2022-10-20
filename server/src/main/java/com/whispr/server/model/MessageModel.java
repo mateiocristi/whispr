@@ -13,7 +13,6 @@ public class MessageModel {
     //    private MessageType type;
     private String chatRoomId;
     private long userId;
-    private String text;
 
     public MessageModel(Message message) {
         this.id = message.getId();
