@@ -18,7 +18,7 @@ export class ContactsViewComponent implements OnInit {
 
   @Input() currentUser!: User;
   @Input() chatRooms!: Array<ChatRoom>;
-  @Input() currentRoom?: ChatRoom;
+  @Input() currentChatRoom?: ChatRoom;
 
   constructor(private userService: UserService, private chatService: ChatService, private router: Router) {
   }

@@ -3,31 +3,35 @@
     <app-contacts-view class="home-container col-md-4 border-right bg-secondary p-0 m-0" id="contacts-view"></app-contacts-view>
     <app-chat-view class="col-md-8 p-0 m-0" id="chat-view"></app-chat-view>
 </div>  -->
-<div id="background_header"></div>
-<div id="background_body"></div>
+<div id="mainContainer">
+  <div id="background_header"></div>
+  <div id="background_body"></div>
 
-<div id="chatContainer">
-  <app-contacts-view 
-  [chatRooms]="getAllChatRooms()"
-  [currentRoom]="getCurrentChatRoom()"
-  [currentUser]="getLoggedUser()"
-  (searchEntered)="handleSearchContact($event)"
-  (conversationClick)="handleConversationClick($event)">
-</app-contacts-view>
-  
-  <div id="chat">
-    <div id="chatPlaceholder" *ngIf="!currentChatRoom">
-      <img width="400" src="../assets/images/phoneIcon.png" />
-      <h2>Whispr</h2>
-      <p>
-        Whispr connects your phone to sync messages. To reduce data<br />
-        usage, connect to your phone to Wi-Fi.
-      </p>
-      <div class="seperator"></div>
+  <div id="chatContainer">
+    <app-contacts-view
+      [chatRooms]="getAllChatRooms()"
+      [currentChatRoom]="getCurrentChatRoom()"
+      [currentUser]="getLoggedUser()"
+      (searchEntered)="handleSearchContact($event)"
+      (conversationClick)="handleConversationClick($event)"
+    >
+    </app-contacts-view>
+
+    <div id="chat">
+      <div id="chatPlaceholder" *ngIf="!currentChatRoom">
+        <img width="400" src="../assets/images/phoneIcon.png" />
+        <h2>Whispr</h2>
+        <p>
+          Whispr connects your phone to sync messages. To reduce data<br />
+          usage, connect to your phone to Wi-Fi.
+        </p>
+        <div class="seperator"></div>
+      </div>
+      <app-chat-view
+        [currentChatRoom]="getCurrentChatRoom()!"
+        [currentUser]="getLoggedUser()"
+        *ngIf="currentChatRoom"
+      ></app-chat-view>
     </div>
-    <app-chat-view 
-    [currentChatRoom]="getCurrentChatRoom()!"
-    [currentUser]="getLoggedUser()"
-    *ngIf="currentChatRoom"></app-chat-view>
   </div>
 </div>

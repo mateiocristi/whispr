@@ -2,29 +2,34 @@
     height: 100vh;
     background-color: lightblue;
   } */
+#mainContainer {
+  width: 100%;
+  height: 100%;
+  background: rgb(117,0,42);
+  background: radial-gradient(circle, rgba(117,0,42,1) 0%, rgba(58,9,41,1) 51%, rgba(0,0,0,1) 77%, rgba(0,0,0,1) 100%);
+}  
 
 #background_header {
   width: 100%;
   height: 80vh;
-  background: -moz-radial-gradient(circle at 50% 25%, #7B002F 0%, #710027 7%, #500028FC 14%, #1D021E 24%, #000000 36%, #000000 42%, #000000 56%, #000000 71%, #000000 83%, #000000 100%);
-
-  /* safari 5.1+,chrome 10+ */
-  background: -webkit-radial-gradient(circle at 50% 25%, #7B002F 0%, #710027 7%, #500028FC 14%, #1D021E 24%, #000000 36%, #000000 42%, #000000 56%, #000000 71%, #000000 83%, #000000 100%);
-
-  /* opera 11.10+ */
-  background: -o-radial-gradient(circle at 50% 25%, #7B002F 0%, #710027 7%, #500028FC 14%, #1D021E 24%, #000000 36%, #000000 42%, #000000 56%, #000000 71%, #000000 83%, #000000 100%);
-
-  /* ie 10+ */
-  background: -ms-radial-gradient(circle at 50% 25%, #7B002F 0%, #710027 7%, #500028FC 14%, #1D021E 24%, #000000 36%, #000000 42%, #000000 56%, #000000 71%, #000000 83%, #000000 100%);
-
-  /* global 92%+ browsers support */
-  background: radial-gradient(circle at 50% 25%, #7B002F 0%, #710027 7%, #500028FC 14%, #1D021E 24%, #000000 36%, #000000 42%, #000000 56%, #000000 71%, #000000 83%, #000000 100%);
 }
 
 #background_body {
   height: 20vh;
   background-color: #d50353;
+  animation: slideInFromBottom 0.3s ease-in-out;
 }
+
+@keyframes slideInFromBottom {
+  100% {
+    transform: translateY(0);
+  }
+  0% {
+    transform: translateY(100%);
+    // transform: translate3d(10%);
+  }
+}
+
 
 #chatContainer {
   position: fixed;
@@ -33,23 +38,26 @@
   margin: auto;
   width: 70%;
   height: 90%;
-  background-color: #fff;
+  // background-color: #0C0208;
+  color: white;
   right: 0px;
   left: 0px;
-  box-shadow: -1px 1px 5px rgba(#333, 0.2);
-  border-radius: 3px;
+  // box-shadow: -1px 1px 5px rgba(#333, 0.2);
   display: flex;
   flex-direction: row;
   overflow: hidden;
-
+  padding: 5px;
+  animation: slideInFromTop 0.3s ease-in-out;
+  
   app-contacts-view {
+    margin-right: 5px;
     flex-basis: 30%;
     display: block;
     height: 100%;
   }
 
   #chat {
-    background-color: #f7f9fa;
+    // background-color: #f7f9fa;
     flex-grow: 1;
 
     #chatPlaceholder {
@@ -58,11 +66,14 @@
       justify-content: center;
       height: 100%;
       flex-direction: column;
+      border-radius: 25px;
+      background-color: #0C0208;
+      box-shadow: 2px 2px 4px rgb(11, 0, 0);
 
       h2 {
         font-size: 35px;
         font-weight: normal;
-        color: #555555;
+        color: white;
       }
       .seperator {
         width: 50%;
@@ -73,5 +84,15 @@
         text-align: center;
       }
     }
+  }
+}
+
+@keyframes slideInFromTop {
+  100% {
+    transform: translateY(0);
+  }
+  0% {
+    transform: translateY(-100%);
+    // transform: translate3d(10%);
   }
 }
