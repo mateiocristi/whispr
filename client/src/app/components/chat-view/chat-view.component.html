@@ -19,6 +19,7 @@
             <div *ngIf="message.userId === currentUser.id">
               <img *ngIf="!message.isRead" src="../../assets/images/doubleTick.svg"/>
               <img *ngIf="message.isRead" src="../../assets/images/doubleTickBlue.svg"/>
+
             </div>
             <div class="time">{{ message.timestamp | date:"shortTime" }}</div>
           </div>

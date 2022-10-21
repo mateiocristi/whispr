@@ -63,6 +63,18 @@ export class ChatService {
     return this.http.get<ChatRoom>(Globals.API_ENDPOINT + "/user/getChatRoomWithIds/" + currentUserId + "/" + endUserId, { headers });
   }
 
+  markMultipleMessagesAsRead(roomId: string, userId: bigint, messages: Array<Message>) {
+    if (messages.length > 0) {
+      messages.filter(m => m.id === userId).forEach(m => m.isRead = true);
+    }
+    return this.http.post<string>(Globals.API_ENDPOINT + "/user/setMessagesRead/" + roomId + "/" + userId, {});
+  }
+
+  markOneMessagesAsRead(message: Message) {
+    message.isRead = true;
+    return this.http.post<string>(Globals.API_ENDPOINT + "/user/setMessageRead/" + message.id, {});
+  }
+
   findChatRoomWithUserField(chatRooms: Array<ChatRoom>, value: string | bigint): ChatRoom | undefined {
     type key = keyof SimpleUser;
     const fieldKey = typeof value === "string" ? "username" as key : "id" as key;

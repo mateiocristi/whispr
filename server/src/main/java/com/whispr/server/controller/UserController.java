@@ -63,22 +63,24 @@ public class UserController {
         return null;
     }
 
-    @GetMapping("/getMessages/{room_id}")
-    public ResponseEntity<List<MessageModel>> getMessagesByChatRoomId(@PathVariable String room_id) {
+    @GetMapping("/getMessages/{roomId}")
+    public ResponseEntity<List<MessageModel>> getMessagesByChatRoomId(@PathVariable String roomId) {
         List<MessageModel> messages = new ArrayList<>();
-        messageService.findAllByRoomId(room_id).forEach(message -> messages.add(new MessageModel(message)));
-
+        messageService.findAllByRoomId(roomId).forEach(message -> messages.add(new MessageModel(message)));
         return ResponseEntity.status(OK).body(messages);
-
     }
 
-//    @GetMapping("/getChatRoom/{from_id}/{to_id}")
-//    public ResponseEntity<ChatRoom> getChatRoomForUsersIds(@PathVariable long from_id, @PathVariable long to_id) {
-//        AppUser fromUser = userService.getUserById(from_id).get();
-//        AppUser toUser = userService.getUserById(to_id).get();
-//        ChatRoom ch = chatRoomService.getRoomByUsers(fromUser, toUser);
-//        return ResponseEntity.status(HttpStatus.OK).body(ch);
-//    }
+    @PostMapping("/setMessagesRead/{roomId}/{userId}")
+    public ResponseEntity<?> setMessagesReadForChatRoomUser(@PathVariable String roomId, @PathVariable long userId) {
+        messageService.markMultipleMessagesAsRead(roomId, userId);
+        return ResponseEntity.status(OK).body("success");
+    }
+
+    @PostMapping("/setMessageRead/{messageId}")
+    public ResponseEntity<?> setMessageRead(@PathVariable long messageId) {
+        messageService.markOneMessageAsRead(messageId);
+        return ResponseEntity.status(OK).body("success");
+    }
 
     @GetMapping("/getAllChatRooms/{userId}")
     public ResponseEntity<List<ChatRoomModel>> getAllChatRooms(@PathVariable long userId) {

@@ -26,6 +26,16 @@ public class MessageServiceImp implements MessageService {
     }
 
     @Override
+    public void markMultipleMessagesAsRead(String roomId, long userId) {
+        messageRepo.setMessagesRead(roomId, userId);
+    }
+
+    @Override
+    public void markOneMessageAsRead(long id) {
+        messageRepo.setMessageRead(id);
+    }
+
+    @Override
     public void deleteMessage(long id) {
         messageRepo.deleteById(id);
     }

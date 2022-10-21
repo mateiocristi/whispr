@@ -32,41 +32,57 @@ export class HomeComponent implements OnInit {
     this.currentUser = this.userService.getUser()!;
 
     this.chatService
-      .fetchAllChatRoomsAndMessages(this.currentUser!.id).subscribe((chatRooms) => {
-        chatRooms.forEach(cr => cr.lastMessage = this.chatService.findLastMessage(cr.messages));
+      .fetchAllChatRoomsAndMessages(this.currentUser!.id)
+      .subscribe((chatRooms) => {
+        chatRooms.forEach(
+          (cr) =>
+            (cr.lastMessage = this.chatService.findLastMessage(cr.messages))
+        );
         this.chatRooms = chatRooms;
 
         this.messageSubscrition = this.chatService.messageEmitter.subscribe(
-          (data) => {
-            console.log("message received " + data.messageText);
-            const conversation = this.chatRooms.find(cr => cr.id === data.chatRoomId);
+          (newMessage) => {
+            console.log('message received ' + newMessage.messageText);
+            const conversation = this.chatRooms.find((cr) => cr.id === newMessage.chatRoomId);
+            if (conversation?.id === this.currentChatRoom?.id) {
+              // this.chatService.markOneMessagesAsRead(newMessage).subscribe();
+            }
             //conversation exists; append message
             if (conversation) {
-              conversation.messages.push(data);
-              conversation.lastMessage = data;
+              conversation.messages.push(newMessage);
+              conversation.lastMessage = newMessage;
             }
             //conversation is new; fetch chatRoom from server and append it to chatRooms
             if (!conversation) {
-              this.chatService.fetchChatRoomWithIds(this.currentUser.id, data.userId).subscribe(chatRoom => {
-                chatRoom.lastMessage = this.chatService.findLastMessage(chatRoom.messages); 
-                this.chatRooms.push(chatRoom);
-              })
+              this.chatService
+                .fetchChatRoomWithIds(this.currentUser.id, newMessage.userId)
+                .subscribe((chatRoom) => {
+                  chatRoom.lastMessage = this.chatService.findLastMessage(
+                    chatRoom.messages
+                  );
+                  this.chatRooms.push(chatRoom);
+                });
             }
           }
         );
         this.chatService.connectToChat(this.currentUser!.id);
+
         try {
           this.currentChatRoom = chatRooms.at(0);
           this.endUser = this.currentChatRoom!.users.find(
             (user) => user.id != this.currentUser.id
           );
+          // mark all messages as read
+          // this.chatService.markMultipleMessagesAsRead(
+          //   this.currentChatRoom!.id,
+          //   this.endUser!.id,
+          //   this.currentChatRoom!.messages
+          // ).subscribe();
         } catch {
           console.log('no conversations');
         }
       });
   }
-
-  ngOnDestroy(): void {}
 
   handleConversationClick(chatRoom: ChatRoom) {
     this.currentChatRoom = chatRoom;
@@ -84,7 +100,15 @@ export class HomeComponent implements OnInit {
     if (nextChatRoom!) {
       console.log('conversation exists...');
       this.currentChatRoom = nextChatRoom;
-      this.endUser = this.currentChatRoom.users.find(user => user.id !== this.currentUser.id);
+      this.endUser = this.currentChatRoom.users.find(
+        (user) => user.id !== this.currentUser.id
+      );
+      // mark all messages as read
+      // this.chatService.markMultipleMessagesAsRead(
+      //   this.currentChatRoom!.id,
+      //   this.endUser!.id,
+      //   this.currentChatRoom!.messages
+      // ).subscribe();
     } else {
       console.log('conversation not found... fetching...');
       this.chatService
