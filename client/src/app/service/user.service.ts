@@ -21,13 +21,12 @@ export class UserService {
     }
 
     register(username: string, password: string): Observable<any> {
-        console.log("registering with username " + username, + " paswword " + password);
+        console.log("registering with username " + username, + " password " + password);
 
         const headers = { "Content-Type": "application/json" }
         const raw = JSON.stringify({
             "username": username,
-            "password": password,
-            "roles": ["USER"]
+            "password": password
         });
 
         const requestOptions = {
@@ -46,7 +45,7 @@ export class UserService {
             if (data) {
                 this.user = data;
                 console.log("navig");
-                
+
                 this.router.navigate(["/home"]);
             }
         });

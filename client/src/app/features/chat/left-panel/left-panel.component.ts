@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { end } from '@popperjs/core';
 import { ChatService } from 'src/app/service/chat.service';
 import { ChatRoom, SimpleUser, User, UserService } from '../../../service/user.service';
 

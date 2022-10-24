@@ -10,6 +10,7 @@ import com.whispr.server.service.MessageService;
 import com.whispr.server.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,15 +32,11 @@ public class UserController {
 
     @PostMapping("/create")
     public ResponseEntity<AppUser> createUser(@RequestBody AppUser user) {
-        log.info("user: " + user);
         return ResponseEntity.ok().body(userService.createUser(user));
     }
 
     @GetMapping("/login")
     public ResponseEntity<?> getUserByUsername(Principal principal) {
-        // TEST
-//        Set<AppUser> users = new HashSet<AppUser>().add(userService.getUserByUsername("matei"));
-        // END
         return ResponseEntity.ok().body(userService.getUserByUsername(principal.getName()));
     }
 

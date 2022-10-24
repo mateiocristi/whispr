@@ -22,10 +22,8 @@ public class AppUser {
     private String password;
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> roles = new HashSet<>();
-//    @OneToMany
-//    @ToString.Exclude
-//    private Set<ChatRoom> rooms = new HashSet<>();
-//    @OneToMany
-//    @ToString.Exclude
-//    private Set<Message> messages = new HashSet<>();
+
+    public void setRole(String role) {
+        roles.add(role);
+    }
 }

@@ -37,6 +37,7 @@ public class UserServiceImp implements UserService, UserDetailsService {
 
     @Override
     public AppUser createUser(AppUser user) {
+        user.setRole("USER");
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         return userRepo.save(user);
     }
