@@ -6,17 +6,16 @@ import { ChatRoom, SimpleUser, User, UserService } from 'src/app/service/user.se
 import { Globals } from 'src/app/utils/globals';
 
 @Component({
-  selector: 'app-chat-view',
-  templateUrl: './chat-view.component.html',
-  styleUrls: ['./chat-view.component.scss'],
+  selector: 'chat-frame',
+  templateUrl: './chat-frame.component.html',
+  styleUrls: ['./chat-frame.component.scss'],
 })
-export class ChatViewComponent implements OnInit, AfterViewChecked {
+export class ChatFrameComponent implements OnInit, AfterViewChecked {
   @ViewChild("scrollContainer") private messageContainer: ElementRef | undefined;
-  
   @Input() currentUser!: User;
   @Input() currentChatRoom!: ChatRoom;
 
-  messageText?: string; 
+  messageText?: string;
 
   constructor(private userService: UserService, private chatService: ChatService, private http: HttpClient) {
   }
@@ -34,7 +33,7 @@ export class ChatViewComponent implements OnInit, AfterViewChecked {
 
   sendButtonHandler(event: Event): void {
     console.log("message to be sent: " + this.messageText);
-    
+
     if (this.messageText) {
       console.log("sending message");
       const endUserId = this.currentChatRoom.users.find(user => user.id !== this.currentUser.id)!.id;
@@ -46,6 +45,6 @@ export class ChatViewComponent implements OnInit, AfterViewChecked {
   scrollToBottom(): void {
     try {
         this.messageContainer!.nativeElement.scrollTop = this.messageContainer!.nativeElement.scrollHeight;
-    } catch(err) { }                 
+    } catch(err) { }
 }
 }

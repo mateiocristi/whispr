@@ -2,14 +2,14 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { end } from '@popperjs/core';
 import { ChatService } from 'src/app/service/chat.service';
-import { ChatRoom, SimpleUser, User, UserService } from '../../service/user.service';
+import { ChatRoom, SimpleUser, User, UserService } from '../../../service/user.service';
 
 @Component({
-  selector: 'app-contacts-view',
-  templateUrl: './contacts-view.component.html',
-  styleUrls: ['./contacts-view.component.scss']
+  selector: 'left-panel',
+  templateUrl: './left-panel.component.html',
+  styleUrls: ['./left-panel.component.scss']
 })
-export class ContactsViewComponent implements OnInit {
+export class LeftPanelComponent implements OnInit {
 
   @Output() conversationClick: EventEmitter<ChatRoom> = new EventEmitter<ChatRoom>()
 
@@ -24,11 +24,11 @@ export class ContactsViewComponent implements OnInit {
   }
 
   ngOnInit(): void {
-   
+
   }
 
   ngOnDestroy(): void {
-  
+
   }
 
   onSearchTextEntered() {

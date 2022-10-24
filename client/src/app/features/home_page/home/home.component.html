@@ -8,29 +8,26 @@
   <div id="background_body"></div>
 
   <div id="chatContainer">
-    <app-contacts-view
+    <left-panel
       [chatRooms]="getAllChatRooms()"
       [currentChatRoom]="getCurrentChatRoom()"
       [currentUser]="getLoggedUser()"
       (searchEntered)="handleSearchContact($event)"
       (conversationClick)="handleConversationClick($event)"
     >
-    </app-contacts-view>
-
+    </left-panel>
     <div id="chat">
       <div id="chatPlaceholder" *ngIf="!currentChatRoom">
         <img width="400" src="../assets/images/phoneIcon.png" />
         <h2>Whispr</h2>
-        <p>
-          Whispr is a secure chat app.<br />
-        </p>
+        <p>Whispr is a secure chat app.<br /></p>
         <div class="seperator"></div>
       </div>
-      <app-chat-view
+      <chat-frame
         [currentChatRoom]="getCurrentChatRoom()!"
         [currentUser]="getLoggedUser()"
         *ngIf="currentChatRoom"
-      ></app-chat-view>
+      ></chat-frame>
     </div>
   </div>
 </div>

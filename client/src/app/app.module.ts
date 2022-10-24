@@ -5,32 +5,28 @@ import { AppComponent } from './app.component';
 import { HttpClientModule } from "@angular/common/http";
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppRoutingModule } from './app-routing.module';
-import { LogonScreenComponent } from './components/auth-page/logon_screen.component';
-import { RegisterComponent } from './components/register/register.component';
-import { LoginComponent } from './components/login/login.component';
-import { HomeComponent } from './components/home/home.component';
-import { NavbarComponent } from './components/navbar/navbar.component';
-import { ContactsViewComponent } from './components/contacts-view/contacts-view.component';
-import { ChatViewComponent } from './components/chat-view/chat-view.component';
-import { UserProfileComponent } from './components/user-profile/user-profile.component';
+import { AuthPageComponent } from './features/authentication/auth-page/auth_page.component';
+import { RegisterComponent } from './features/authentication/register/register.component';
+import { LoginComponent } from './features/authentication/login/login.component';
+import { HomeComponent } from './features/home_page/home/home.component';
+import { LeftPanelComponent } from './features/home_page/left-panel/left-panel.component';
+import { ChatFrameComponent } from './features/home_page/chat-frame/chat-frame.component';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 
 import { RouteGuardService } from './service/routeGuard.service';
-import { GetEndUserPipe } from './customPipes/GetEndUser.pipe';
+import { GetEndUserPipe } from './pipes/GetEndUser.pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
-    LogonScreenComponent,
+    AuthPageComponent,
     RegisterComponent,
     LoginComponent,
     HomeComponent,
-    NavbarComponent,
-    ContactsViewComponent,
-    ChatViewComponent,
-    UserProfileComponent,
+    LeftPanelComponent,
+    ChatFrameComponent,
     GetEndUserPipe
   ],
     imports: [
@@ -41,7 +37,7 @@ import { GetEndUserPipe } from './customPipes/GetEndUser.pipe';
         FormsModule,
         AppRoutingModule,
         BrowserAnimationsModule,
-        
+
     ],
   providers: [RouteGuardService],
   bootstrap: [AppComponent]
