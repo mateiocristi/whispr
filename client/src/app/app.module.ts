@@ -18,10 +18,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 
 import { RouteGuardService } from './service/routeGuard.service';
-import { DisplayEndUsernamePipe } from './customPipes/DisplayEndUsername.pipe';
-
-
-
+import { GetEndUserPipe } from './customPipes/GetEndUser.pipe';
 
 @NgModule({
   declarations: [
@@ -34,7 +31,7 @@ import { DisplayEndUsernamePipe } from './customPipes/DisplayEndUsername.pipe';
     ContactsViewComponent,
     ChatViewComponent,
     UserProfileComponent,
-    DisplayEndUsernamePipe
+    GetEndUserPipe
   ],
     imports: [
       HttpClientModule,

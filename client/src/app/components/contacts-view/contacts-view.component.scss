@@ -1,0 +1,196 @@
+#sidebar {
+    width: 100%;
+    height: 100%;
+    // border-right: 1px solid #3f3f3f;
+    border-radius: 25px 25px 25px 25px;
+    // box-shadow: -3px 4px 10px rgba(rgb(0, 0, 0), 0.2);
+    box-shadow: 2px 2px 4px rgb(43, 2, 20);
+    display: flex;
+    flex-direction: column;
+    background-color: #0C0208;
+  
+    #row1 {
+      display: flex;
+      flex-direction: column;
+
+      #sidebarHeader {
+        flex-basis: 67px;
+        background-color: #2d2d2d;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding-left: 20px;
+        padding-right: 20px;
+        justify-content: space-between;
+        border-radius: 25px;
+
+        .avatarContainer {
+          flex-basis: 43px;
+          display: flex;
+          height: 43px;
+
+          .nameSection {
+            flex-grow: 1;
+            margin-left: 10px;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+          }
+
+          img {
+            height: 100%;
+          }
+        }
+  
+        .actionsContainer {
+          height: 100%;
+          width: 110px;
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+        }
+      }
+  
+      #searchBox {
+        flex-basis: 50px;
+        background-color: #0C0208;
+        border-bottom: 1px solid #313131;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        img {
+          position: absolute;
+          left: 40px;
+        }
+  
+        input {
+          width: 90%;
+          border: none;
+          border-radius: 20px;
+          height: 70%;
+          text-align: center;
+          // padding-left: 80px;
+          background-color: #4c4c4c;
+          color: white;
+          outline: none;
+          box-shadow: 0px 0px 3px #373636;
+          
+          &::placeholder {
+            color: #a4a4a4;
+            font-weight: 100;
+          }
+        }
+      }
+    }
+  
+    #noConversations {
+      padding-top: 30px;
+      text-align: center;
+      color: #b9b9b9;
+      font-size: 18px;
+  
+      font-weight: 100;
+    }
+  
+    #sidebarContent {
+      flex-grow: 1;
+      overflow: auto;
+  
+      .conversation {
+        height: 67px;
+        display: flex;
+        padding-right: 5px;
+        border-bottom: 1px solid #2e2e2e;
+        transition: all 0.4s ease-in-out;
+        cursor: pointer;
+        &:hover {
+          background-color: rgba(rgb(255, 255, 255), 0.1);
+        }
+        &.selected {
+          background-color: #3e3e3e;
+        }
+        .picture {
+          flex-basis: 73px;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          img {
+            max-width: 100%;
+            width: 48px;
+          }
+        }
+        .content {
+          flex-grow: 1;
+          padding: 13px 0px;
+          padding-right: 10px;
+          .conversationHeader {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            .name {
+              color: white;
+            }
+            .time {
+              color: #979797;
+              font-size: 13px;
+              padding-top: 2px;
+            }
+          }
+  
+          .message {
+            color: #717171;
+            font-size: 13px;
+            padding-top: 5px;
+            display: flex;
+            align-items: center;
+            img {
+              margin-right: 2px;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+
+/* .scrollarea {
+    overflow: auto;
+}
+
+.scrollarea::-webkit-scrollbar {
+    display: none;
+  }
+  
+
+.scrollarea {
+    -ms-overflow-style: none;  
+    scrollbar-width: none; 
+}
+
+.card {
+    height: 35px;
+    text-align: center;
+    font-size: large;
+    font-weight: 500;
+}
+
+.conversation-container {
+    background-color: gray;
+    padding: 1%;
+}
+
+input {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-color: lightgray;
+}
+
+button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-color: lightgray;
+    border-left: 0;
+}
+ */
