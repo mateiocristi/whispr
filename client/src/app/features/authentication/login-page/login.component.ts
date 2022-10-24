@@ -24,14 +24,7 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-    this.userService.retrieveJWT(this.getUsername()!.value, this.getPassword()!.value).subscribe((jwt) => {
-      console.log("jwt is " + jwt);
-
-        this.userService.saveCookie("jwt", jwt);
-        this.userService.login();
-      }
-    )
-    this.userService.login();
+    this.userService.executeLogin(this.getUsername()!.value, this.getPassword()!.value);
   }
 
   getUsername(){

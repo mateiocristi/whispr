@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import * as Stomp from "stompjs";
 import * as SockJS from "sockjs-client";
 import { Observable, Subject } from 'rxjs';
-import { ChatRoom, Message, SimpleUser } from './user.service';
+import { ChatRoom, Message, User } from './user.service';
 import { Globals } from '../utils/globals';
 import { HttpClient } from '@angular/common/http';
 
@@ -76,7 +76,7 @@ export class ChatService {
   }
 
   findChatRoomWithUserField(chatRooms: Array<ChatRoom>, value: string | bigint): ChatRoom | undefined {
-    type key = keyof SimpleUser;
+    type key = keyof User;
     const fieldKey = typeof value === "string" ? "username" as key : "id" as key;
 
     return chatRooms!.find(x => x.users.some(u => u[fieldKey] === value));
@@ -84,7 +84,7 @@ export class ChatService {
 
   findLastMessage(messages: Array<Message>): Message {
     console.log("find last message");
-    
+
     const maxTimestamp = Math.max(...messages.map(x => x.timestamp));
     return messages.find(message => message.timestamp === maxTimestamp)!;
   }

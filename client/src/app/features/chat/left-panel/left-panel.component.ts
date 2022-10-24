@@ -1,34 +1,31 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { ChatService } from 'src/app/service/chat.service';
-import { ChatRoom, SimpleUser, User, UserService } from '../../../service/user.service';
+import { ChatRoom, User, UserService } from '../../../service/user.service';
 
 @Component({
   selector: 'left-panel',
   templateUrl: './left-panel.component.html',
-  styleUrls: ['./left-panel.component.scss']
+  styleUrls: ['./left-panel.component.scss'],
 })
 export class LeftPanelComponent implements OnInit {
-
-  @Output() conversationClick: EventEmitter<ChatRoom> = new EventEmitter<ChatRoom>()
+  @Output() conversationClick: EventEmitter<ChatRoom> =
+    new EventEmitter<ChatRoom>();
 
   @Output() searchEntered: EventEmitter<string> = new EventEmitter<string>();
-  searchedContact: string = "";
+  searchedContact: string = '';
 
   @Input() currentUser!: User;
   @Input() chatRooms!: Array<ChatRoom>;
   @Input() currentChatRoom?: ChatRoom;
 
-  constructor(private userService: UserService, private chatService: ChatService, private router: Router) {
-  }
+  constructor(
+    private userService: UserService
+  ) {}
 
-  ngOnInit(): void {
+  ngOnInit(): void {}
 
-  }
-
-  ngOnDestroy(): void {
-
-  }
+  ngOnDestroy(): void {}
 
   onSearchTextEntered() {
     this.searchEntered.emit(this.searchedContact);

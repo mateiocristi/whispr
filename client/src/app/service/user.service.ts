@@ -1,164 +1,172 @@
-import { HttpClient, HttpHeaders, HttpRequest } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { Router } from "@angular/router";
-import { CookieService } from "ngx-cookie-service";
-import { ignoreElements, Observable, Subject } from "rxjs";
-import { Globals } from "../utils/globals"
-import * as Stomp from "stompjs";
-import * as SockJS from "sockjs-client";
-import { ChatService } from "./chat.service";
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
+import { Observable } from 'rxjs';
+import { Globals } from '../utils/globals';
+import { ChatService } from './chat.service';
+import * as Buffer from 'buffer';
 
 @Injectable({
-    providedIn: "root"
+  providedIn: 'root',
 })
 export class UserService {
+  private currentUser?: User;
+  private endUser?: User;
 
-    private user?: User;
-    private endUser?: SimpleUser;
+  constructor(
+    private chatService: ChatService,
+    private cookieService: CookieService,
+    private http: HttpClient,
+    private router: Router
+  ) {}
 
-    constructor(private chatService: ChatService, private cookieService: CookieService, private http: HttpClient, private router: Router) {
+  register(username: string, password: string): Observable<any> {
+    console.log(
+      'registering with username ' + username,
+      +' password ' + password
+    );
 
-    }
+    const headers = { 'Content-Type': 'application/json' };
+    const raw = JSON.stringify({
+      username: username,
+      password: password,
+    });
 
-    register(username: string, password: string): Observable<any> {
-        console.log("registering with username " + username, + " password " + password);
+    const requestOptions = {
+      method: 'POST',
+      body: raw,
+      headers: headers,
+      redirect: 'follow',
+    };
 
-        const headers = { "Content-Type": "application/json" }
-        const raw = JSON.stringify({
-            "username": username,
-            "password": password
-        });
+    return this.http.post<any>(
+      Globals.API_ENDPOINT + '/user/create',
+      raw,
+      requestOptions
+    );
+  }
 
-        const requestOptions = {
-            method: "POST",
-            body: raw,
-            headers: headers,
-            redirect: "follow"
-        };
+  executeLogin(username: string, password: string) {
+    this.login(username, password).subscribe({
+      next: (jwt) => {
+        console.log('jwt ', jwt.access_token);
 
-        return this.http.post<any>(Globals.API_ENDPOINT + "/user/create", raw, requestOptions);
-    }
+        this.decodeJWT(jwt.access_token);
+        this.router.navigate(['/home']);
+      },
+      error: (e) => {
+        // handle error
+        console.log('error ', e);
+      },
+    });
+  }
 
-    login() {
-        this.loginWithJWT().subscribe(data => {
-            // this.onUserChange.next(data);
-            if (data) {
-                this.user = data;
-                console.log("navig");
+  login( username: string = this.currentUser!.username, password: string): Observable<Jwt> {
+    const headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
+    const urlencoded = new URLSearchParams();
+    urlencoded.append('username', username);
+    urlencoded.append('password', password);
 
-                this.router.navigate(["/home"]);
-            }
-        });
-    }
+    const requestOptions = {
+      method: 'POST',
+      headers: headers,
+      body: urlencoded,
+      redirect: 'follow',
+    };
 
-    retrieveJWT(username: string, password: string): Observable<Jwt> {
-        const headers = { "Content-Type": "application/x-www-form-urlencoded" };
-        const urlencoded = new URLSearchParams();
-        urlencoded.append("username", username);
-        urlencoded.append("password", password);
+    return this.http.post<Jwt>(Globals.API_ENDPOINT + '/login', urlencoded, {
+      headers,
+    });
+  }
 
-        const requestOptions = {
-            method: "POST",
-            headers: headers,
-            body: urlencoded,
-            redirect: "follow"
-        };
+  decodeJWT(token: string) {
+    const payload: Payload = JSON.parse(
+      Buffer.Buffer.from(token.split('.')[1], 'base64').toString()
+    );
+    // todo
+    // this.currentUser.id = payload.id;
+    // this.currentUser.username = payload.sub;
+  }
 
-        return this.http.post<Jwt>(Globals.API_ENDPOINT + "/login", urlencoded, { headers });
-    }
+  logout(): void {
+    this.chatService.stompClient?.disconnect(() => {
+      console.log('disconnected from chat');
+    });
+    // this.onUserChange.next(undefined);
+    this.deleteCookies();
+    this.router.navigate(['/']);
+  }
 
-    loginWithJWT(): Observable<User> {
-        const access_token = this.getCookie("jwt").access_token;
-        console.log("access token from cookies: " + access_token);
+  checkUsername(username: string): Observable<string> {
+    const headers = new HttpHeaders().set('Content-Type', 'text/plain');
+    const reqOptions: Object = {
+      headers: headers,
+      responseType: 'text',
+    };
+    return this.http.get<string>(
+      Globals.API_ENDPOINT + '/user/checkUsername/' + username,
+      reqOptions
+    );
+  }
 
-        const headers = { "Content-Type": "application/json", "Authorization": "Bearer " + access_token };
-        const requestOptions = {
-            method: "POST",
-            headers: headers,
-            redirect: "follow"
-        };
-        return this.http.get<User>(Globals.API_ENDPOINT + "/user/login/", { headers });
-    }
+  setEndUser(user: User) {
+    this.endUser = user;
+  }
 
+  getEndUser(): User {
+    return this.endUser!;
+  }
 
-    logout(): void {
-        this.chatService.stompClient?.disconnect(() => {
-            console.log("disconnected from chat");
-        });
-        // this.onUserChange.next(undefined);
-        this.deleteCookies();
-        this.router.navigate(["/"]);
-    }
+  setUser(user: User | undefined) {
+    this.currentUser = user;
+  }
 
-    checkUsername(username: string): Observable<string> {
-        const headers = new HttpHeaders().set("Content-Type", "text/plain")
-        const reqOptions: Object = {
-            headers: headers,
-            responseType: "text"
-        }
-        return this.http.get<string>(Globals.API_ENDPOINT + "/user/checkUsername/" + username, reqOptions);
-    }
+  getUser(): User | undefined {
+    return this.currentUser;
+  }
 
-    setEndUser(user: SimpleUser) {
-        this.endUser = user;
-    }
+  saveCookie(key: string, data: any) {
+    this.cookieService.set(key, JSON.stringify(data));
+  }
 
-    getEndUser(): SimpleUser {
-        return this.endUser!;
-    }
+  getCookie(key: string): any {
+    return JSON.parse(this.cookieService.get(key) || '{}');
+  }
 
-    setUser(user: User | undefined) {
-        this.user = user;
-    }
-
-    getUser(): User | undefined {
-        return this.user;
+  deleteCookies(): void {
+    this.cookieService.deleteAll();
+  }
 }
 
-    saveCookie(key: string, data: any) {
-        this.cookieService.set(key, JSON.stringify(data));
-    }
-
-    getCookie(key: string): any {
-        return JSON.parse(this.cookieService.get(key) || "{}");
-    }
-
-    deleteCookies(): void {
-        this.cookieService.deleteAll();
-    }
+export interface Payload {
+  sub: string;
+  id: bigint;
 }
 
 export interface User {
-    id: bigint,
-    username: string,
-    password: string,
-    roles: [],
-}
-
-export interface SimpleUser {
-    id: bigint;
-    username: string;
+  id: bigint;
+  username: string;
 }
 
 export interface ChatRoom {
-    id: string;
-    users: Array<SimpleUser>;
-    messages: Array<Message>;
-    lastMessage: Message;
+  id: string;
+  users: Array<User>;
+  messages: Array<Message>;
+  lastMessage: Message;
 }
 
 export interface Message {
-    id: bigint;
-    userId: bigint;
-    messageText: string;
-    timestamp: number;
-    isRead: boolean;
-    type: string;
-    chatRoomId: string;
+  id: bigint;
+  userId: bigint;
+  messageText: string;
+  timestamp: number;
+  isRead: boolean;
+  type: string;
+  chatRoomId: string;
 }
 
 interface Jwt {
-    access_token: string;
-    refresh_token: string;
+  access_token: string;
+  refresh_token: string;
 }
-

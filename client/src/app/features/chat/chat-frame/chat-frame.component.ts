@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef, OnInit, AfterViewChecked, ViewChild, Input } from '@angular/core';
 import { Observable, of, Subscription } from 'rxjs';
 import { ChatService } from 'src/app/service/chat.service';
-import { ChatRoom, SimpleUser, User, UserService } from 'src/app/service/user.service';
+import { ChatRoom, User, UserService } from 'src/app/service/user.service';
 import { Globals } from 'src/app/utils/globals';
 
 @Component({

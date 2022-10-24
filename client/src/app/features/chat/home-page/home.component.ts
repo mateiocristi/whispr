@@ -4,7 +4,6 @@ import { Subscription } from 'rxjs';
 import { ChatService } from 'src/app/service/chat.service';
 import {
   ChatRoom,
-  SimpleUser,
   User,
   UserService,
 } from '../../../service/user.service';
@@ -16,7 +15,7 @@ import {
 })
 export class HomeComponent implements OnInit {
   currentUser!: User;
-  endUser?: SimpleUser;
+  endUser?: User;
   chatRooms: Array<ChatRoom> = new Array<ChatRoom>();
   currentChatRoom?: ChatRoom;
 
@@ -118,7 +117,7 @@ export class HomeComponent implements OnInit {
           next: (data) => {
             this.chatRooms.push(data);
           },
-          error: (e) => console.error(e),
+          error: (e) => console.error(e)
         });
     }
   }
