@@ -15,9 +15,8 @@
     </div>
   </div>
   <div id="sidebarContent">
-    <!-- <div id="noConversations">Start chatting</div> -->
-    <div class="conversation" 
-        [ngClass]="{ selected: conversation.id === currentChatRoom?.id }" 
+    <div class="conversation"
+        [ngClass]="{ selected: conversation.id === currentChatRoom?.id }"
         *ngFor="let conversation of chatRooms" (click)="onConversationClick(conversation)">
       <div class="picture">
         <img src="../../assets/images/noPic.svg" />
@@ -39,7 +38,6 @@
           />
           </div>
           {{ conversation.lastMessage.messageText }}
-          <!-- {{ (conversation.messages | LastMessage).messageText }} -->
         </div>
       </div>
     </div>

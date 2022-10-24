@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ContactsViewComponent } from './contacts-view.component';
+import { AuthPageComponent } from './auth_page.component';
 
-describe('ContactsViewComponent', () => {
-  let component: ContactsViewComponent;
-  let fixture: ComponentFixture<ContactsViewComponent>;
+describe('HomeComponent', () => {
+  let component: AuthPageComponent;
+  let fixture: ComponentFixture<AuthPageComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ContactsViewComponent ]
+      declarations: [ AuthPageComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ContactsViewComponent);
+    fixture = TestBed.createComponent(AuthPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

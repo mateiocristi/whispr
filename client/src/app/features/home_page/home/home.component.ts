@@ -4,14 +4,13 @@ import { Subscription } from 'rxjs';
 import { ChatService } from 'src/app/service/chat.service';
 import {
   ChatRoom,
-  Message,
   SimpleUser,
   User,
   UserService,
-} from '../../service/user.service';
+} from '../../../service/user.service';
 
 @Component({
-  selector: 'app-home',
+  selector: 'home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
@@ -43,7 +42,9 @@ export class HomeComponent implements OnInit {
         this.messageSubscrition = this.chatService.messageEmitter.subscribe(
           (newMessage) => {
             console.log('message received ' + newMessage.messageText);
-            const conversation = this.chatRooms.find((cr) => cr.id === newMessage.chatRoomId);
+            const conversation = this.chatRooms.find(
+              (cr) => cr.id === newMessage.chatRoomId
+            );
             if (conversation?.id === this.currentChatRoom?.id) {
               // this.chatService.markOneMessagesAsRead(newMessage).subscribe();
             }
