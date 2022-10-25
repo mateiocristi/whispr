@@ -6,12 +6,12 @@
 <div id="mainContainer">
   <div id="background_header"></div>
   <div id="background_body"></div>
-
+  {{ logDetection() }}
   <div id="chatContainer">
     <left-panel
-      [chatRooms]="getAllChatRooms()"
       [currentChatRoom]="getCurrentChatRoom()"
       [currentUser]="getLoggedUser()"
+      [conversations]="chatRooms"
       (searchEntered)="handleSearchContact($event)"
       (conversationClick)="handleConversationClick($event)"
     >

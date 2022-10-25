@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { Globals } from '../utils/globals';
 import { ChatService } from './chat.service';
 import * as Buffer from 'buffer';
+import { C2okieService } from './c2okie.service.service';
 
 @Injectable({
   providedIn: 'root',
@@ -16,17 +17,12 @@ export class UserService {
 
   constructor(
     private chatService: ChatService,
-    private cookieService: CookieService,
+    private c2okieService: C2okieService,
     private http: HttpClient,
     private router: Router
   ) {}
 
   register(username: string, password: string): Observable<any> {
-    console.log(
-      'registering with username ' + username,
-      +' password ' + password
-    );
-
     const headers = { 'Content-Type': 'application/json' };
     const raw = JSON.stringify({
       username: username,
@@ -53,6 +49,7 @@ export class UserService {
         console.log('jwt ', jwt.access_token);
 
         this.decodeJWT(jwt.access_token);
+        this.c2okieService.saveCookie("jwt", jwt);
         this.router.navigate(['/home']);
       },
       error: (e) => {
@@ -62,7 +59,7 @@ export class UserService {
     });
   }
 
-  login( username: string = this.currentUser!.username, password: string): Observable<Jwt> {
+  login( username: string, password: string): Observable<Jwt> {
     const headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
     const urlencoded = new URLSearchParams();
     urlencoded.append('username', username);
@@ -81,9 +78,10 @@ export class UserService {
   }
 
   decodeJWT(token: string) {
-    const payload: Payload = JSON.parse(
-      Buffer.Buffer.from(token.split('.')[1], 'base64').toString()
-    );
+    this.currentUser = JSON.parse(
+      atob(token.split('.')[1])
+    ) as User;
+    console.log("current user" + this.currentUser.username);
     // todo
     // this.currentUser.id = payload.id;
     // this.currentUser.username = payload.sub;
@@ -94,7 +92,7 @@ export class UserService {
       console.log('disconnected from chat');
     });
     // this.onUserChange.next(undefined);
-    this.deleteCookies();
+    this.c2okieService.deleteAll();
     this.router.navigate(['/']);
   }
 
@@ -126,22 +124,6 @@ export class UserService {
     return this.currentUser;
   }
 
-  saveCookie(key: string, data: any) {
-    this.cookieService.set(key, JSON.stringify(data));
-  }
-
-  getCookie(key: string): any {
-    return JSON.parse(this.cookieService.get(key) || '{}');
-  }
-
-  deleteCookies(): void {
-    this.cookieService.deleteAll();
-  }
-}
-
-export interface Payload {
-  sub: string;
-  id: bigint;
 }
 
 export interface User {
@@ -166,7 +148,7 @@ export interface Message {
   chatRoomId: string;
 }
 
-interface Jwt {
+export interface Jwt {
   access_token: string;
   refresh_token: string;
 }

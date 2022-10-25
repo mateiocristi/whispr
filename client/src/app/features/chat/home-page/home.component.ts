@@ -1,87 +1,74 @@
+import { ChangeDetectionStrategy } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription, takeUntil } from 'rxjs';
 import { ChatService } from 'src/app/service/chat.service';
-import {
-  ChatRoom,
-  User,
-  UserService,
-} from '../../../service/user.service';
+import { ChatRoom, User, UserService } from '../../../service/user.service';
+import { Unsub } from '../../unsub.class';
 
 @Component({
   selector: 'home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
+  // changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent extends Unsub implements OnInit {
   currentUser!: User;
   endUser?: User;
-  chatRooms: Array<ChatRoom> = new Array<ChatRoom>();
+  chatRooms?: Array<ChatRoom>;
   currentChatRoom?: ChatRoom;
 
-  messageSubscrition = new Subscription();
+  // conversations$?: Observable<Array<ChatRoom>>;
+
+  chatRoomsSub?: Subscription;
+  messageSub?: Subscription;
 
   constructor(
     private userService: UserService,
     private chatService: ChatService
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.currentUser = this.userService.getUser()!;
 
-    this.chatService
-      .fetchAllChatRoomsAndMessages(this.currentUser!.id)
-      .subscribe((chatRooms) => {
-        chatRooms.forEach(
-          (cr) =>
-            (cr.lastMessage = this.chatService.findLastMessage(cr.messages))
-        );
-        this.chatRooms = chatRooms;
-
-        this.messageSubscrition = this.chatService.messageEmitter.subscribe(
-          (newMessage) => {
-            console.log('message received ' + newMessage.messageText);
-            const conversation = this.chatRooms.find(
-              (cr) => cr.id === newMessage.chatRoomId
-            );
-            if (conversation?.id === this.currentChatRoom?.id) {
-              // this.chatService.markOneMessagesAsRead(newMessage).subscribe();
-            }
-            //conversation exists; append message
-            if (conversation) {
-              conversation.messages.push(newMessage);
-              conversation.lastMessage = newMessage;
-            }
-            //conversation is new; fetch chatRoom from server and append it to chatRooms
-            if (!conversation) {
-              this.chatService
-                .fetchChatRoomWithIds(this.currentUser.id, newMessage.userId)
-                .subscribe((chatRoom) => {
-                  chatRoom.lastMessage = this.chatService.findLastMessage(
-                    chatRoom.messages
-                  );
-                  this.chatRooms.push(chatRoom);
-                });
-            }
-          }
-        );
-        this.chatService.connectToChat(this.currentUser!.id);
-
-        try {
-          this.currentChatRoom = chatRooms.at(0);
-          this.endUser = this.currentChatRoom!.users.find(
-            (user) => user.id != this.currentUser.id
-          );
-          // mark all messages as read
-          // this.chatService.markMultipleMessagesAsRead(
-          //   this.currentChatRoom!.id,
-          //   this.endUser!.id,
-          //   this.currentChatRoom!.messages
-          // ).subscribe();
-        } catch {
-          console.log('no conversations');
-        }
+    // this.conversations$ = this.chatService.fetchAllChatRoomsAndMessages(this.currentUser.id);
+    this.chatRoomsSub = this.chatService
+      .fetchAllChatRoomsAndMessages(this.currentUser.id)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((data) => {
+        this.chatRooms! = new Array<ChatRoom>(...data);
+        this.currentChatRoom = this.chatService.findChatRoomWithUserField(data, this.currentUser.id);
       });
+
+    this.chatService.connectToChat(this.currentUser!.id);
+
+    this.messageSub = this.chatService.messageEmitter.subscribe(
+      (newMessage) => {
+        console.log('message received ' + newMessage.messageText);
+        const conversation = this.chatRooms?.find(
+          (cr) => cr.id === newMessage.chatRoomId
+        );
+
+        //conversation exists; append message
+        if (conversation) {
+          conversation.messages.push(newMessage);
+          conversation.lastMessage = newMessage;
+        }
+        //conversation is new; fetch chatRoom from server and append it to chatRooms
+        if (!conversation) {
+          this.chatService
+            .fetchChatRoomWithIds(this.currentUser.id, newMessage.userId)
+            .pipe(takeUntil(this.unsubscribe$))
+            .subscribe((chatRoom) => {
+              this.chatRooms?.push(chatRoom);
+            });
+        }
+
+        this.chatRooms = new Array<ChatRoom>(...this.chatRooms!);
+      }
+    );
   }
 
   handleConversationClick(chatRoom: ChatRoom) {
@@ -95,7 +82,7 @@ export class HomeComponent implements OnInit {
     }
 
     const nextChatRoom: ChatRoom | undefined =
-      this.chatService.findChatRoomWithUserField(this.chatRooms, searchValue!);
+      this.chatService.findChatRoomWithUserField(this.chatRooms!, searchValue!);
 
     if (nextChatRoom!) {
       console.log('conversation exists...');
@@ -103,23 +90,24 @@ export class HomeComponent implements OnInit {
       this.endUser = this.currentChatRoom.users.find(
         (user) => user.id !== this.currentUser.id
       );
-      // mark all messages as read
-      // this.chatService.markMultipleMessagesAsRead(
-      //   this.currentChatRoom!.id,
-      //   this.endUser!.id,
-      //   this.currentChatRoom!.messages
-      // ).subscribe();
+
     } else {
       console.log('conversation not found... fetching...');
+      // todo unsubscribe when anotehr search triggers
       this.chatService
         .fetchChatRoomWithUsernames(this.currentUser!.username, searchValue!)
+        .pipe(takeUntil(this.unsubscribe$))
         .subscribe({
           next: (data) => {
-            this.chatRooms.push(data);
+            this.chatRooms?.push(data);
           },
-          error: (e) => console.error(e)
+          error: (e) => console.error(e),
         });
     }
+  }
+
+  logDetection() {
+    console.log('home rendered');
   }
 
   getAllChatRooms() {

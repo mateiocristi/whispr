@@ -35,11 +35,6 @@ public class UserController {
         return ResponseEntity.ok().body(userService.createUser(user));
     }
 
-//    @GetMapping("/login")
-//    public ResponseEntity<?> getUserByUsername(Principal principal) {
-//        return ResponseEntity.ok().body(userService.getUserByUsername(principal.getName()));
-//    }
-
     @GetMapping("/checkUsername/{username}")
     public ResponseEntity<?> checkUsername(@PathVariable String username) {
         log.info("found " + userService.checkUser(username));

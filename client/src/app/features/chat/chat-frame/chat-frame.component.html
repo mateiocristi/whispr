@@ -1,10 +1,13 @@
 <div id="container">
+  {{ logDetection() }}
   <div id="header">
     <div class="avatarSection">
       <div class="picture">
         <img src="../../assets/images/noPic.svg" />
       </div>
-      <div class="nameSection">{{ (currentChatRoom.users | GetEndUser: currentUser.id).username}}</div>
+      <div class="nameSection">
+        {{ (currentChatRoom.users | GetEndUser: currentUser.id).username }}
+      </div>
     </div>
     <div class="actionButtons">
       <img src="../../assets/images/attached.svg" />
@@ -12,26 +15,39 @@
     </div>
   </div>
   <div id="body" #scrollContainer>
-    <div class="message" [ngClass]="{ me: message.userId !== (currentChatRoom.users | GetEndUser : currentUser.id).id }" *ngFor="let message of currentChatRoom!.messages">
-        <div class="messageContent">
-          {{ message.messageText }}
-          <div style="display: flex">
-            <div *ngIf="message.userId === currentUser.id">
-              <img *ngIf="!message.isRead" src="../../assets/images/doubleTick.svg"/>
-              <img *ngIf="message.isRead" src="../../assets/images/doubleTickBlue.svg"/>
-
-            </div>
-            <div class="time">{{ message.timestamp | date:"shortTime" }}</div>
+    <div
+      class="message"
+      [ngClass]="{
+        me:
+          message.userId !==
+          (currentChatRoom.users | GetEndUser: currentUser.id).id
+      }"
+      *ngFor="let message of currentChatRoom!.messages">
+      <div class="messageContent">
+        {{ message.messageText }}
+        <div style="display: flex">
+          <div *ngIf="message.userId === currentUser.id">
+            <img
+              *ngIf="!message.isRead"
+              src="../../assets/images/doubleTick.svg"
+            />
+            <img
+              *ngIf="message.isRead"
+              src="../../assets/images/doubleTickBlue.svg"
+            />
           </div>
+          <div class="time">{{ message.timestamp | date: "shortTime" }}</div>
         </div>
+      </div>
     </div>
   </div>
   <div id="footer">
     <div id="smileyIcon">
-      <img src="../../assets/images/smileIcon.svg"/>
+      <img src="../../assets/images/smileIcon.svg" />
     </div>
     <div id="textarea">
-      <textarea placeholder="Enter message"
+      <textarea
+        placeholder="Enter message"
         [(ngModel)]="messageText"
         (keyup.enter)="sendButtonHandler($event)"
       ></textarea>

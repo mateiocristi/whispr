@@ -3,6 +3,7 @@ package com.whispr.server.filter;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.whispr.server.entity.AppUser;
 import com.whispr.server.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -34,7 +35,6 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
 
-
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         String username = request.getParameter("username");
@@ -52,6 +52,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 .withSubject(user.getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60 * 1000))
                 .withIssuer(request.getRequestURL().toString())
+                .withClaim("username", user.getUsername())
                 .withClaim("id", userService.getUserByUsername(user.getUsername()).get().getId())
                 .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .sign(algorithm);
