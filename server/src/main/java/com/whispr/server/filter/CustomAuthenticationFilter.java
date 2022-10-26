@@ -61,14 +61,12 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60 * 1000))
                 .withIssuer(request.getRequestURL().toString())
                 .sign(algorithm);
-        Token token = new Token();
-        token.access_token = access_token;
-        token.refresh_token = refresh_token;
+        Token token = new Token(access_token, refresh_token);
         response.setContentType(APPLICATION_JSON_VALUE);
         new ObjectMapper().writeValue(response.getOutputStream(), token);
     }
 
-    @Data
+    @AllArgsConstructor
     static class Token {
         private String access_token;
         private String refresh_token;

@@ -10,11 +10,9 @@ import com.whispr.server.service.MessageService;
 import com.whispr.server.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +22,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RequiredArgsConstructor
 @RequestMapping("/user")
 @Slf4j
-public class UserController {
+public class ApiController {
 
     private final UserService userService;
     private final ChatRoomService chatRoomService;
@@ -32,7 +30,7 @@ public class UserController {
 
     @PostMapping("/create")
     public ResponseEntity<AppUser> createUser(@RequestBody AppUser user) {
-        return ResponseEntity.ok().body(userService.createUser(user));
+        return ResponseEntity.ok().body(userService.saveUser(user));
     }
 
     @GetMapping("/checkUsername/{username}")

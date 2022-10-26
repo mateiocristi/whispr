@@ -1,6 +1,7 @@
 package com.whispr.server.service;
 
 import com.whispr.server.entity.AppUser;
+import com.whispr.server.entity.Role;
 import com.whispr.server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
+
+import static com.whispr.server.entity.Role.USER_ROLE;
 
 @Service
 @RequiredArgsConstructor
@@ -31,13 +34,13 @@ public class UserServiceImp implements UserService, UserDetailsService {
         }
         AppUser user = userOptional.get();
         Collection<SimpleGrantedAuthority> roles = new ArrayList<>();
-        user.getRoles().forEach(role -> roles.add(new SimpleGrantedAuthority(role)));
+        user.getRoles().forEach(role -> roles.add(new SimpleGrantedAuthority(role.getName())));
         return new User(user.getUsername(), user.getPassword(), roles);
     }
 
     @Override
-    public AppUser createUser(AppUser user) {
-        user.setRole("USER");
+    public AppUser saveUser(AppUser user) {
+        user.setRole(Role.builder().name(Role.USER_ROLE).build());
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         return userRepo.save(user);
     }

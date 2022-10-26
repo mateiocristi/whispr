@@ -9,7 +9,6 @@ import com.whispr.server.service.MessageService;
 import com.whispr.server.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -21,9 +20,9 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
 @Slf4j
-public class MessagingController {
+public class SocketController {
 
-    @Autowired
+//    @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
     private final ChatRoomService chatRoomService;
     private final MessageService messageService;
