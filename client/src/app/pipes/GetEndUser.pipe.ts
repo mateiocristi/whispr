@@ -1,10 +1,10 @@
 import { Pipe, PipeTransform } from "@angular/core"
-import { SimpleUser } from "../service/user.service";
+import { User } from "../service/user.service";
 
 
 @Pipe({name: "GetEndUser"})
 export class GetEndUserPipe implements PipeTransform {
-    transform(value: Array<SimpleUser>, currentUserId: bigint): SimpleUser {
+    transform(value: Array<User>, currentUserId: bigint): User {
         return value.find(user => user.id !== currentUserId)!;
     }
 }

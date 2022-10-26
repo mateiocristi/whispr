@@ -1,11 +1,10 @@
 package com.whispr.server.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Builder
 @Entity
@@ -20,12 +19,10 @@ public class AppUser {
     private long id;
     private String username;
     private String password;
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> roles = new HashSet<>();
-//    @OneToMany
-//    @ToString.Exclude
-//    private Set<ChatRoom> rooms = new HashSet<>();
-//    @OneToMany
-//    @ToString.Exclude
-//    private Set<Message> messages = new HashSet<>();
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Collection<Role> roles = new ArrayList<>();
+
+    public void setRole(Role role) {
+        roles.add(role);
+    }
 }

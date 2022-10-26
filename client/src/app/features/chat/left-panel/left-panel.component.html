@@ -1,0 +1,65 @@
+<div id="sidebar">
+  {{ logDetection() }}
+  <div id="row1">
+    <div id="sidebarHeader">
+      <div class="avatarContainer">
+        <img src="../../assets/images/noPic.svg" />
+        <div class="nameSection">{{ currentUser!.username }}</div>
+      </div>
+      <div class="actionsContainer">
+        <img
+          width="30"
+          src="../../assets/images/logoff.svg"
+          (click)="logout($event)"
+        />
+      </div>
+    </div>
+    <div id="searchBox">
+      <img
+        width="19"
+        src="../../assets/images/searchIcon.svg"
+        (click)="onSearchTextEntered()"
+      />
+      <input
+        type="text"
+        placeholder="Search or start the new chat"
+        [(ngModel)]="searchedContact"
+      />
+    </div>
+  </div>
+  <div id="sidebarContent">
+    <div
+      class="conversation"
+      [ngClass]="{ selected: conversation.id === currentChatRoom?.id }"
+      *ngFor="let conversation of conversations"
+      (click)="onConversationClick(conversation)"
+    >
+      <div class="picture">
+        <img src="../../assets/images/noPic.svg" />
+      </div>
+      <div class="content">
+        <div class="conversationHeader">
+          <div class="name">
+            {{ (conversation.users | GetEndUser: currentUser!.id).username }}
+          </div>
+          <div class="time" *ngIf="conversation.messages.length > 0">
+            {{ conversation.lastMessage.timestamp | date: "shortTime" }}
+          </div>
+        </div>
+        <div class="message" *ngIf="conversation.messages.length > 0">
+          <div *ngIf="conversation.lastMessage.userId !== currentUser.id">
+            <img
+              *ngIf="!conversation.lastMessage.isRead"
+              src="../../assets/images/doubleTick.svg"
+            />
+            <img
+              *ngIf="conversation.lastMessage.isRead"
+              src="../../assets/images/doubleTickBlue.svg"
+            />
+          </div>
+          {{ conversation.lastMessage.messageText }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

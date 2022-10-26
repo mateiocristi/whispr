@@ -1,91 +1,149 @@
 import { Injectable } from '@angular/core';
-import * as Stomp from "stompjs";
-import * as SockJS from "sockjs-client";
-import { Observable, Subject } from 'rxjs';
-import { ChatRoom, Message, SimpleUser } from './user.service';
+import * as Stomp from 'stompjs';
+import * as SockJS from 'sockjs-client';
+import { BehaviorSubject, map, Observable, Subject } from 'rxjs';
+import { ChatRoom, Message, User } from './user.service';
 import { Globals } from '../utils/globals';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ChatService {
-
   socket?: WebSocket;
   stompClient?: Stomp.Client;
 
-  messageEmitter: Subject<Message> = new Subject<Message>;
+  messageEmitter = new Subject<Message>();
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   connectToChat(user_id: bigint): void {
-    console.log("connecting to chat...");
-    this.socket = new SockJS(Globals.API_ENDPOINT + "/chat");
+    console.log('connecting to chat...');
+    this.socket = new SockJS(Globals.API_ENDPOINT + '/chat');
     this.stompClient = Stomp.over(this.socket);
-    this.stompClient.connect({}, (frame) => {
-      console.log(frame);
-      this.stompClient!.subscribe(
-        "/topic/messages/" + user_id,
-        (response) => {
-          // handle the message
-          const message: Message = JSON.parse(response.body)
-          console.log("new message ", message);
-          this.messageEmitter.next(message);
-        }
-      )
-    }, err => {
-      console.log("error " + err);
-    });
+    this.stompClient.connect(
+      {},
+      (frame) => {
+        console.log(frame);
+        this.stompClient!.subscribe(
+          '/topic/messages/' + user_id,
+          (response) => {
+            // handle the message
+            const message: Message = JSON.parse(response.body);
+            console.log('new message ', message);
+            this.messageEmitter.next(message);
+          }
+        );
+      },
+      (err) => {
+        console.log('error ' + err);
+      }
+    );
   }
 
   sendMessage(currentUserId: bigint, endUserId: bigint, message: string) {
-    console.log("message to be sent is " + message);
+    console.log('message to be sent is ' + message);
 
     if (message !== undefined) {
-      console.log("message is sending...");
+      console.log('message is sending...');
 
-      this.stompClient!.send("/app/chat/" + currentUserId + "/" + endUserId, {}, message);
+      this.stompClient!.send(
+        '/app/chat/' + currentUserId + '/' + endUserId,
+        {},
+        message
+      );
     }
   }
 
-  fetchAllChatRoomsAndMessages(currentUserId: bigint): Observable<Array<ChatRoom>> {
-    const headers = { "Content-Type": "application/json" }
-    return this.http.get<Array<ChatRoom>>(Globals.API_ENDPOINT + "/user/getAllChatRooms/" + currentUserId);
+  fetchAllChatRoomsAndMessages(
+    currentUserId: bigint
+  ): Observable<Array<ChatRoom>> {
+    const headers = { 'Content-Type': 'application/json' };
+    return this.http
+      .get<Array<ChatRoom>>(
+        Globals.API_ENDPOINT + '/user/getAllChatRooms/' + currentUserId
+      )
+      .pipe(
+        map((x) =>
+          x.map((y) => ({
+            ...y,
+            lastMessage: this.findLastMessage(y.messages),
+          }))
+        )
+      );
   }
 
-  fetchChatRoomWithUsernames(currentUsername: String, endUsername: String): Observable<ChatRoom> {
-    const headers = { "Content-Type": "application/json" };
-    return this.http.get<ChatRoom>(Globals.API_ENDPOINT + "/user/getChatRoomWithUsernames/" + currentUsername + "/" + endUsername, { headers });
+  fetchChatRoomWithUsernames(
+    currentUsername: String,
+    endUsername: String
+  ): Observable<ChatRoom> {
+    const headers = { 'Content-Type': 'application/json' };
+    return this.http.get<ChatRoom>(
+      Globals.API_ENDPOINT +
+        '/user/getChatRoomWithUsernames/' +
+        currentUsername +
+        '/' +
+        endUsername,
+      { headers }
+    );
   }
 
-  fetchChatRoomWithIds(currentUserId: bigint, endUserId: bigint): Observable<ChatRoom> {
-    const headers = { "Content-Type": "application/json" };
-    return this.http.get<ChatRoom>(Globals.API_ENDPOINT + "/user/getChatRoomWithIds/" + currentUserId + "/" + endUserId, { headers });
+  fetchChatRoomWithIds(
+    currentUserId: bigint,
+    endUserId: bigint
+  ): Observable<ChatRoom> {
+    const headers = { 'Content-Type': 'application/json' };
+    return this.http
+      .get<ChatRoom>(
+        Globals.API_ENDPOINT +
+          '/user/getChatRoomWithIds/' +
+          currentUserId +
+          '/' +
+          endUserId,
+        { headers }
+      )
+      .pipe(
+        map((cr) => ({ ...cr, lastMessage: this.findLastMessage(cr.messages) }))
+      );
   }
 
-  markMultipleMessagesAsRead(roomId: string, userId: bigint, messages: Array<Message>) {
+  markMultipleMessagesAsRead(
+    roomId: string,
+    userId: bigint,
+    messages: Array<Message>
+  ) {
     if (messages.length > 0) {
-      messages.filter(m => m.id === userId).forEach(m => m.isRead = true);
+      messages.filter((m) => m.id === userId).forEach((m) => (m.isRead = true));
     }
-    return this.http.post<string>(Globals.API_ENDPOINT + "/user/setMessagesRead/" + roomId + "/" + userId, {});
+    return this.http.post<string>(
+      Globals.API_ENDPOINT + '/user/setMessagesRead/' + roomId + '/' + userId,
+      {}
+    );
   }
 
   markOneMessagesAsRead(message: Message) {
     message.isRead = true;
-    return this.http.post<string>(Globals.API_ENDPOINT + "/user/setMessageRead/" + message.id, {});
+    return this.http.post<string>(
+      Globals.API_ENDPOINT + '/user/setMessageRead/' + message.id,
+      {}
+    );
   }
 
-  findChatRoomWithUserField(chatRooms: Array<ChatRoom>, value: string | bigint): ChatRoom | undefined {
-    type key = keyof SimpleUser;
-    const fieldKey = typeof value === "string" ? "username" as key : "id" as key;
+  findChatRoomWithUserField(
+    chatRooms: Array<ChatRoom>,
+    value: string | bigint
+  ): ChatRoom | undefined {
+    type key = keyof User;
+    const fieldKey =
+      typeof value === 'string' ? ('username' as key) : ('id' as key);
 
-    return chatRooms!.find(x => x.users.some(u => u[fieldKey] === value));
+    return chatRooms!.find((x) => x.users.some((u) => u[fieldKey] === value));
   }
 
   findLastMessage(messages: Array<Message>): Message {
-    console.log("find last message");
-    
-    const maxTimestamp = Math.max(...messages.map(x => x.timestamp));
-    return messages.find(message => message.timestamp === maxTimestamp)!;
+    console.log('find last message');
+
+    const maxTimestamp = Math.max(...messages.map((x) => x.timestamp));
+    return messages.find((message) => message.timestamp === maxTimestamp)!;
   }
 }

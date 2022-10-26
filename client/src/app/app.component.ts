@@ -12,11 +12,11 @@ import {UserService} from './service/user.service';
 export class AppComponent implements OnInit {
 
   constructor(private userService: UserService) {
-    this.userService.login();
+    // this.userService.executeLogin();
   }
 
   ngOnInit(): void {
-    
+
   }
-  
+
 }

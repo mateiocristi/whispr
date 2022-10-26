@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +22,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RequiredArgsConstructor
 @RequestMapping("/user")
 @Slf4j
-public class UserController {
+public class ApiController {
 
     private final UserService userService;
     private final ChatRoomService chatRoomService;
@@ -31,16 +30,7 @@ public class UserController {
 
     @PostMapping("/create")
     public ResponseEntity<AppUser> createUser(@RequestBody AppUser user) {
-        log.info("user: " + user);
-        return ResponseEntity.ok().body(userService.createUser(user));
-    }
-
-    @GetMapping("/login")
-    public ResponseEntity<?> getUserByUsername(Principal principal) {
-        // TEST
-//        Set<AppUser> users = new HashSet<AppUser>().add(userService.getUserByUsername("matei"));
-        // END
-        return ResponseEntity.ok().body(userService.getUserByUsername(principal.getName()));
+        return ResponseEntity.ok().body(userService.saveUser(user));
     }
 
     @GetMapping("/checkUsername/{username}")
