@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface UserService {
-    AppUser saveUser(AppUser user);
+    AppUser saveUser(String username, String password);
     AppUser updateUser(AppUser user);
     Optional<AppUser> checkUser(String username);
     Optional<AppUser> getUserByUsername(String username);

@@ -39,9 +39,13 @@ public class UserServiceImp implements UserService, UserDetailsService {
     }
 
     @Override
-    public AppUser saveUser(AppUser user) {
-        user.setRole(Role.builder().name(Role.USER_ROLE).build());
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+    public AppUser saveUser(String username, String password) {
+        AppUser user = AppUser.builder()
+                .username(username)
+                .password(bCryptPasswordEncoder.encode(password))
+                .roles(new HashSet<>())
+                .build();
+        user.setRole(Role.builder().name(USER_ROLE).build());
         return userRepo.save(user);
     }
 

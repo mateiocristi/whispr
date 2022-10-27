@@ -1,8 +1,8 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
-import { HttpClientModule } from "@angular/common/http";
+import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppRoutingModule } from './app-routing.module';
 import { AuthPageComponent } from './features/authentication/auth-page/auth_page.component';
@@ -17,6 +17,9 @@ import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 
 import { RouteGuardService } from './service/routeGuard.service';
 import { GetEndUserPipe } from './pipes/GetEndUser.pipe';
+import { TokenInterceptorService } from './service/token-interceptor.service';
+import { UserService } from './service/user.service';
+import { C2okieService } from './service/c2okie.service.service';
 
 @NgModule({
   declarations: [
@@ -31,15 +34,17 @@ import { GetEndUserPipe } from './pipes/GetEndUser.pipe';
   ],
     imports: [
       HttpClientModule,
-        BrowserModule,
-        NgbModule,
-        ReactiveFormsModule,
-        FormsModule,
-        AppRoutingModule,
-        BrowserAnimationsModule,
-
+      BrowserModule,
+      NgbModule,
+      ReactiveFormsModule,
+      FormsModule,
+      AppRoutingModule,
+      BrowserAnimationsModule,
     ],
-  providers: [RouteGuardService],
+  providers: [
+    RouteGuardService,
+    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptorService, multi: true, deps: [UserService, C2okieService] }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

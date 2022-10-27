@@ -20,18 +20,14 @@ import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/user")
+@RequestMapping("/api/res")
+@CrossOrigin(origins = "http://localhost:4200")
 @Slf4j
-public class ApiController {
+public class ResourcesController {
 
     private final UserService userService;
     private final ChatRoomService chatRoomService;
     private final MessageService messageService;
-
-    @PostMapping("/create")
-    public ResponseEntity<AppUser> createUser(@RequestBody AppUser user) {
-        return ResponseEntity.ok().body(userService.saveUser(user));
-    }
 
     @GetMapping("/checkUsername/{username}")
     public ResponseEntity<?> checkUsername(@PathVariable String username) {

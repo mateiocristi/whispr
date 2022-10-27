@@ -3,17 +3,17 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { Observable } from 'rxjs';
-import { Globals } from '../utils/globals';
 import { ChatService } from './chat.service';
 import * as Buffer from 'buffer';
 import { C2okieService } from './c2okie.service.service';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  private currentUser?: User;
-  private endUser?: User;
+  public currentUser?: User;
+  public endUser?: User;
 
   constructor(
     private chatService: ChatService,
@@ -22,34 +22,31 @@ export class UserService {
     private router: Router
   ) {}
 
-  register(username: string, password: string): Observable<any> {
+  register(name: string, passwd: string): Observable<any> {
     const headers = { 'Content-Type': 'application/json' };
     const raw = JSON.stringify({
-      username: username,
-      password: password,
+      username: name,
+      password: passwd
     });
 
     const requestOptions = {
       method: 'POST',
-      body: raw,
       headers: headers,
       redirect: 'follow',
     };
 
     return this.http.post<any>(
-      Globals.API_ENDPOINT + '/user/create',
-      raw,
-      requestOptions
+      environment.API_ENDPOINT + '/api/auth/signUp', raw, requestOptions
     );
   }
 
   executeLogin(username: string, password: string) {
-    this.login(username, password).subscribe({
-      next: (jwt) => {
-        console.log('jwt ', jwt.access_token);
+    this.singIn(username, password).subscribe({
+      next: (res) => {
+        console.log('jwt ', res.token);
 
-        this.decodeJWT(jwt.access_token);
-        this.c2okieService.saveCookie("jwt", jwt);
+        this.currentUser = res as User;
+        this.c2okieService.set('jwt', res.token as string);
         this.router.navigate(['/home']);
       },
       error: (e) => {
@@ -59,32 +56,21 @@ export class UserService {
     });
   }
 
-  login( username: string, password: string): Observable<Jwt> {
-    const headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
-    const urlencoded = new URLSearchParams();
-    urlencoded.append('username', username);
-    urlencoded.append('password', password);
+  singIn( username: string, password: string): Observable<SignInResponse> {
+    const headers = { 'Content-Type': 'application/json' };
+    const user = JSON.stringify({
+      username: username,
+      password: password
+    })
 
     const requestOptions = {
       method: 'POST',
       headers: headers,
-      body: urlencoded,
+
       redirect: 'follow',
     };
 
-    return this.http.post<Jwt>(Globals.API_ENDPOINT + '/login', urlencoded, {
-      headers,
-    });
-  }
-
-  decodeJWT(token: string) {
-    this.currentUser = JSON.parse(
-      atob(token.split('.')[1])
-    ) as User;
-    console.log("current user" + this.currentUser.username);
-    // todo
-    // this.currentUser.id = payload.id;
-    // this.currentUser.username = payload.sub;
+    return this.http.post<SignInResponse>(environment.API_ENDPOINT + '/api/auth/signIn', user, requestOptions);
   }
 
   logout(): void {
@@ -103,7 +89,7 @@ export class UserService {
       responseType: 'text',
     };
     return this.http.get<string>(
-      Globals.API_ENDPOINT + '/user/checkUsername/' + username,
+      environment.API_ENDPOINT + '/api/res/checkUsername/' + username,
       reqOptions
     );
   }
@@ -148,7 +134,10 @@ export interface Message {
   chatRoomId: string;
 }
 
-export interface Jwt {
-  access_token: string;
-  refresh_token: string;
+export interface SignInResponse {
+  id: bigint,
+  username: string,
+  roles: string[],
+  token: string,
+  type: string
 }

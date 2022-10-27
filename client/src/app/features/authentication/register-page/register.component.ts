@@ -27,7 +27,6 @@ export class RegisterComponent implements OnInit {
 
   register() {
     console.log("checking username " + this.registerForm.get('username')?.value);
-    this.userService.checkUsername(this.getUsername()?.value).subscribe()
     this.userService.register(this.getUsername()!.value, this.getPassword()!.value).subscribe(data => {
       console.log(data);
   });

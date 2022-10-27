@@ -3,8 +3,8 @@ import * as Stomp from 'stompjs';
 import * as SockJS from 'sockjs-client';
 import { BehaviorSubject, map, Observable, Subject } from 'rxjs';
 import { ChatRoom, Message, User } from './user.service';
-import { Globals } from '../utils/globals';
 import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +19,7 @@ export class ChatService {
 
   connectToChat(user_id: bigint): void {
     console.log('connecting to chat...');
-    this.socket = new SockJS(Globals.API_ENDPOINT + '/chat');
+    this.socket = new SockJS(environment.API_ENDPOINT + '/chat');
     this.stompClient = Stomp.over(this.socket);
     this.stompClient.connect(
       {},
@@ -61,7 +61,7 @@ export class ChatService {
     const headers = { 'Content-Type': 'application/json' };
     return this.http
       .get<Array<ChatRoom>>(
-        Globals.API_ENDPOINT + '/user/getAllChatRooms/' + currentUserId
+        environment.API_ENDPOINT + '/api/res/getAllChatRooms/' + currentUserId
       )
       .pipe(
         map((x) =>
@@ -79,8 +79,8 @@ export class ChatService {
   ): Observable<ChatRoom> {
     const headers = { 'Content-Type': 'application/json' };
     return this.http.get<ChatRoom>(
-      Globals.API_ENDPOINT +
-        '/user/getChatRoomWithUsernames/' +
+      environment.API_ENDPOINT +
+        '/api/res/getChatRoomWithUsernames/' +
         currentUsername +
         '/' +
         endUsername,
@@ -95,8 +95,8 @@ export class ChatService {
     const headers = { 'Content-Type': 'application/json' };
     return this.http
       .get<ChatRoom>(
-        Globals.API_ENDPOINT +
-          '/user/getChatRoomWithIds/' +
+        environment.API_ENDPOINT +
+          '/api/res/getChatRoomWithIds/' +
           currentUserId +
           '/' +
           endUserId,
@@ -116,7 +116,7 @@ export class ChatService {
       messages.filter((m) => m.id === userId).forEach((m) => (m.isRead = true));
     }
     return this.http.post<string>(
-      Globals.API_ENDPOINT + '/user/setMessagesRead/' + roomId + '/' + userId,
+      environment.API_ENDPOINT + '/api/res/setMessagesRead/' + roomId + '/' + userId,
       {}
     );
   }
@@ -124,7 +124,7 @@ export class ChatService {
   markOneMessagesAsRead(message: Message) {
     message.isRead = true;
     return this.http.post<string>(
-      Globals.API_ENDPOINT + '/user/setMessageRead/' + message.id,
+      environment.API_ENDPOINT + '/api/res/setMessageRead/' + message.id,
       {}
     );
   }

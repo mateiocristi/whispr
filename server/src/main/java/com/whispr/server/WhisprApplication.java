@@ -13,9 +13,4 @@ public class WhisprApplication {
         SpringApplication.run(WhisprApplication.class, args);
     }
 
-    @Bean
-    PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
-
 }

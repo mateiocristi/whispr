@@ -11,7 +11,6 @@ import {
 import { Observable, of, Subscription } from 'rxjs';
 import { ChatService } from 'src/app/service/chat.service';
 import { ChatRoom, User, UserService } from 'src/app/service/user.service';
-import { Globals } from 'src/app/utils/globals';
 
 @Component({
   selector: 'chat-frame',

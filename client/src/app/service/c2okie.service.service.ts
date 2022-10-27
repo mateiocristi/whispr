@@ -6,11 +6,11 @@ import { CookieService } from 'ngx-cookie-service';
 })
 export class C2okieService extends CookieService {
 
-  saveCookie(key: string, data: any) {
-    this.set(key, JSON.stringify(data));
+  setObject(key: string, data: any) {
+    this.set(key, typeof data === 'string' ? JSON.stringify(data) : data);
   }
 
-  getCookie(key: string): any {
+  getObject(key: string): any {
     return JSON.parse(this.get(key) || "{}");
   }
 }
