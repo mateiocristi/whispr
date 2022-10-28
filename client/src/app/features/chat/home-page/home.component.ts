@@ -17,7 +17,7 @@ export class HomeComponent extends Unsub implements OnInit {
   endUser?: User;
   chatRooms?: Array<ChatRoom>;
   currentChatRoom?: ChatRoom;
-  
+
   // conversations$?: Observable<Array<ChatRoom>>;
 
   chatRoomsSub?: Subscription;

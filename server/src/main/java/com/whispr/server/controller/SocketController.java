@@ -37,18 +37,22 @@ public class SocketController {
         AppUser toUser = userService.getUserById(to).get();
 
         ChatRoom chatRoom = chatRoomService.getChatRoomById(chatRoomService.calcRoomId(fromUser.getUsername(), toUser.getUsername())).get();
-        Message message = Message.builder().build();
+        Message message = Message.builder()
+                .messageText(messageText)
+                .timestamp(System.currentTimeMillis())
+                .user(fromUser)
+                .isRead(false)
+                .room(chatRoom)
+                .build();
 
-        message.setMessageText(messageText);
-        message.setTimestamp(System.currentTimeMillis());
-        message.setUser(fromUser);
-        message.setRead(false);
-        message.setRoom(chatRoom);
+//        message.setMessageText(messageText);
+//        message.setTimestamp(System.currentTimeMillis());
+//        message.setUser(fromUser);
+//        message.setRead(false);
+//        message.setRoom(chatRoom);
         messageService.saveMessage(message);
 
-        log.info("message user id: " + message.getUser().getId());
 
-        // to do: add the destination id to uri
         simpMessagingTemplate.convertAndSend("/topic/messages/" + toUser.getId() , new MessageModel(message));
         simpMessagingTemplate.convertAndSend("/topic/messages/" + fromUser.getId() , new MessageModel(message));
     }
