@@ -85,6 +85,7 @@ public class ResourcesController {
 
     @GetMapping("/getChatRoomWithIds/{from_userId}/{to_userId}")
     public ResponseEntity<ChatRoomModel> getChatRoomForIds(@PathVariable long from_userId, @PathVariable long to_userId) {
+        log.info("getting chat room for {}, {}", from_userId, to_userId);
         AppUser fromUser = userService.getUserById(from_userId).get();
         AppUser toUser = userService.getUserById(to_userId).get();
         ChatRoom ch = chatRoomService.getRoomByUsers(fromUser, toUser);
