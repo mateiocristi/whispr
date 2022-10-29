@@ -58,6 +58,8 @@ export class HomeComponent extends Unsub implements OnInit {
         }
         //conversation is new; fetch chatRoom from server and append it to chatRooms
         if (!conversation) {
+          console.log("conversation is new, fetching... " + this.currentUser.id + " and " + newMessage.userId);
+
           this.chatService
             .fetchChatRoomWithIds(this.currentUser.id, newMessage.userId)
             .pipe(takeUntil(this.unsubscribe$))
