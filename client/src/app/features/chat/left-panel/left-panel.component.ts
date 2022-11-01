@@ -15,6 +15,7 @@ export class LeftPanelComponent implements OnInit {
     new EventEmitter<ChatRoom>();
 
   @Output() searchEntered: EventEmitter<string> = new EventEmitter<string>();
+
   searchedContact: string = "";
 
   @Input() currentUser!: User;

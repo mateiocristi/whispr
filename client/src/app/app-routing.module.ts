@@ -6,6 +6,7 @@ import { AuthPageComponent } from './features/authentication/auth-page/auth_page
 import { HomeComponent } from './features/chat/home-page/home.component';
 import { RouteGuardService } from './service/routeGuard.service';
 
+// todo: lazy load
 const routes: Routes = [
   { path: '', component: AuthPageComponent },
   { path: 'register', component: RegisterComponent },

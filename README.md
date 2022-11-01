@@ -36,4 +36,4 @@
 
 ## Screenshots
 
-![img.png](img.png)
+![screenshot](screenshot.png)

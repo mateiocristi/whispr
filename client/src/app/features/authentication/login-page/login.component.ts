@@ -11,7 +11,6 @@ import { UserService } from 'src/app/service/user.service';
 })
 export class LoginComponent implements OnInit {
 
-  emailFormControl = new FormControl('', [Validators.required, Validators.email]);
   loginForm!: FormGroup;
 
   constructor(private router: Router, private http: HttpClient, private userService: UserService, private fb: FormBuilder) { }
