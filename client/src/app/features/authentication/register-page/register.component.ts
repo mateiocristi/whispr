@@ -44,5 +44,4 @@ export class RegisterComponent implements OnInit {
   getrPassword() {
     return this.registerForm.get('rPassword');
   }
-
 }

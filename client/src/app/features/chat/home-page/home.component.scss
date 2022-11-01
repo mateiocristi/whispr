@@ -14,7 +14,6 @@ background: radial-gradient(circle, rgba(117,0,42,1) 0%, rgba(58,9,41,1) 72%, rg
   height: 20vh;
   background-color: #d50353;
   animation: slideInFromBottom 0.3s ease-in-out;
-  animation-iteration-count: infinite;
 }
 
 #chatContainer {
@@ -33,7 +32,7 @@ background: radial-gradient(circle, rgba(117,0,42,1) 0%, rgba(58,9,41,1) 72%, rg
   flex-direction: row;
   overflow: hidden;
   padding: 5px;
-  animation: slideInFromTop 3s ease-in-out;
+  animation: slideInFromTop 0.3s ease-in-out;
 
   chat-frame {
     margin-left: 5px;

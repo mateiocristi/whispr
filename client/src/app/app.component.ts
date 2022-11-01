@@ -9,14 +9,9 @@ import {UserService} from './service/user.service';
   providers: []
 })
 
-export class AppComponent implements OnInit {
+export class AppComponent {
 
-  constructor(private userService: UserService) {
-    // this.userService.executeLogin();
-  }
-
-  ngOnInit(): void {
-
+  constructor() {
   }
 
 }
