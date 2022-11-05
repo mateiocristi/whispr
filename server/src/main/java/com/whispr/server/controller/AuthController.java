@@ -1,6 +1,7 @@
 package com.whispr.server.controller;
 
 import com.whispr.server.entity.AppUser;
+import com.whispr.server.entity.Message;
 import com.whispr.server.security.UserDetailsImpl;
 import com.whispr.server.security.jwt.JwtResponse;
 import com.whispr.server.security.jwt.JwtUtils;

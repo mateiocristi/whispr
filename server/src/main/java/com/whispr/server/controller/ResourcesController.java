@@ -2,6 +2,7 @@ package com.whispr.server.controller;
 
 import com.whispr.server.entity.AppUser;
 import com.whispr.server.entity.ChatRoom;
+import com.whispr.server.entity.Message;
 import com.whispr.server.model.ChatRoomModel;
 import com.whispr.server.model.MessageModel;
 import com.whispr.server.model.UserModel;
@@ -49,11 +50,9 @@ public class ResourcesController {
         return null;
     }
 
-    @GetMapping("/getMessages/{roomId}")
-    public ResponseEntity<List<MessageModel>> getMessagesByChatRoomId(@PathVariable String roomId) {
-        List<MessageModel> messages = new ArrayList<>();
-        messageService.findAllByRoomId(roomId).forEach(message -> messages.add(new MessageModel(message)));
-        return ResponseEntity.status(OK).body(messages);
+    @GetMapping("/getMessagesModel/{roomId}")
+    public ResponseEntity<List<MessageModel>> getMessagesWithRoomId(@PathVariable String roomId) {
+        return ResponseEntity.status(OK).body(messageService.findAllWithRoomId(roomId));
     }
 
     @PostMapping("/setMessagesRead/{roomId}/{userId}")

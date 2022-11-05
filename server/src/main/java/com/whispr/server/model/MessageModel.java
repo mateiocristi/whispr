@@ -5,6 +5,7 @@ import lombok.*;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class MessageModel {
     private long id;
     private String messageText;

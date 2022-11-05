@@ -44,14 +44,7 @@ public class SocketController {
                 .isRead(false)
                 .room(chatRoom)
                 .build();
-
-//        message.setMessageText(messageText);
-//        message.setTimestamp(System.currentTimeMillis());
-//        message.setUser(fromUser);
-//        message.setRead(false);
-//        message.setRoom(chatRoom);
         messageService.saveMessage(message);
-
 
         simpMessagingTemplate.convertAndSend("/topic/messages/" + toUser.getId() , new MessageModel(message));
         simpMessagingTemplate.convertAndSend("/topic/messages/" + fromUser.getId() , new MessageModel(message));

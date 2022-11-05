@@ -1,6 +1,7 @@
 package com.whispr.server.service;
 
 import com.whispr.server.entity.Message;
+import com.whispr.server.model.MessageModel;
 import com.whispr.server.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,12 @@ public class MessageServiceImp implements MessageService {
     public List<Message> findAllByRoomId(String id) {
         return messageRepo.findAllByRoomId(id);
     }
+
+    @Override
+    public List<MessageModel> findAllWithRoomId(String id) {
+        return messageRepo.getAllWithRoomId(id);
+    }
+
 
     @Override
     public void saveMessage(Message message) {

@@ -1,5 +1,6 @@
 package com.whispr.server.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
@@ -20,6 +21,7 @@ public class AppUser {
     private String username;
     private String password;
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonBackReference
     private Collection<Role> roles = new ArrayList<>();
 
     public void setRole(Role role) {
